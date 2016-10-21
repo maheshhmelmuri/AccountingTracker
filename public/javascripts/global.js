@@ -21,8 +21,11 @@ function fetchData(trackingId)
         //var res = document.getElementById('jres');
 
         $('#jres').html(data);
-        window.location.href = "/testSome";
+        // window.location.href = "/testSome";
+        $('#divSummaryHead').text("Summary of ID: "+trackId);
+        $('#divSummaryHead').show();
         // res.value=data;
+        // res.trackId = trackId;
     })
 }
 

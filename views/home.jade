@@ -1,14 +1,20 @@
 extends layout
 
 block content
-   div(style="paddingTop:2px")
+   div(style="padding-bottom:10px")
      div.top-heading Welcome to Home Accounting Entries Details
 
-   p search accounting entries
-      br
-      input#inputTrackingId(type='text', placeholder='tracking_id')
-      button#btnSearch(onclick='fetchData(this)',class="waves-effect waves-light btn") Search
+   div
+       div.sub-heading search accounting entries
 
+   div.row(style="padding-top:8px")
+       div.col.s2
+           input#inputTrackingId(type='text', placeholder='tracking_id')
+       div.col.s2
+           button#btnSearch(onclick='fetchData(this)',class="waves-effect waves-light btn") Search
+
+    div
+        div.sub-heading#divSummaryHead(style="display:none")
 
    p Summary
      table(class="highlight")

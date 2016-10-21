@@ -19,7 +19,6 @@ router.get('/api',function (req,res,next) {
   client.get(url, function (data, response) {
     // parsed response body as js object
     console.log(JSON.stringify(data,null,2));
-
     // raw response
     //console.log(response);
     res.send(JSON.stringify(data));
