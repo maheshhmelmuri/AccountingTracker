@@ -21,6 +21,7 @@ function fetchData(trackingId)
         //var res = document.getElementById('jres');
 
         $('#jres').html(data);
+        window.location.href = "/testSome";
         // res.value=data;
     })
 }

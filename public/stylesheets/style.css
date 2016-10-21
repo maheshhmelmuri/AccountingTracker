@@ -6,3 +6,37 @@ body {
 a {
   color: #00B7FF;
 }
+
+
+.footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 41px;
+  z-index: 99
+}
+
+.header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 48px
+}
+
+.top-heading{
+  background-color: #00648B;
+  /*#00648B;*/
+  /*color: #e1f5fe; 8c8b8b*/
+  /*background: -webkit-linear-gradient(#00648B, #A2CEEF, #00648B); !* For Safari 5.1 to 6.0 *!*/
+  /*background: -o-linear-gradient(#00648B, #A2CEEF, #00648B); !* For Opera 11.1 to 12.0 *!*/
+  /*background: -moz-linear-gradient(#00648B, #A2CEEF, #00648B); !* For Firefox 3.6 to 15 *!*/
+  /*background: linear-gradient(#00648B, #A2CEEF, #00648B); !* Standard syntax (must be last) *!*/
+  color: #ffffff;
+  letter-spacing: 0.5px;
+  padding: 8px 18px 6px 18px;
+  font-family: "PT Sans","Roboto","Helvetica","Arial";
+  width: auto !important;
+  font-size: 15px;
+}

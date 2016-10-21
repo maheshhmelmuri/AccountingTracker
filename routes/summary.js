@@ -1,7 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var request = require('request');
-var urls = require('./URL')
+var urls = require('./URL');
 var https = require('https');
 var Client = require('node-rest-client').Client;
 
@@ -23,6 +23,7 @@ router.get('/api',function (req,res,next) {
     // raw response
     //console.log(response);
     res.send(JSON.stringify(data));
+    // res.render('error',{title: 'error'});
   });
 
 

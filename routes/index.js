@@ -3,7 +3,8 @@ var router = express.Router();
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-  res.render('index', { title: 'Express' });
+  var random= 'my main application';
+  res.render('home', { title: 'Accounting Tracker', somename: 'string val'});
 
 });
 

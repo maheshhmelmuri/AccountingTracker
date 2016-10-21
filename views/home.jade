@@ -1,0 +1,40 @@
+extends layout
+
+block content
+   div(style="paddingTop:2px")
+     div.top-heading Welcome to Home Accounting Entries Details
+
+   p search accounting entries
+      br
+      input#inputTrackingId(type='text', placeholder='tracking_id')
+      button#btnSearch(onclick='fetchData(this)',class="waves-effect waves-light btn") Search
+
+
+   p Summary
+     table(class="highlight")
+         thead
+            th Tracking_id
+            th Service Type
+            th Payment Type
+            th Seller Id
+          tbody
+            tr
+              td Alvin
+              td Eclair
+              td $0.87
+            tr
+              td Alan
+              td Jellybean
+              td $3.76
+            tr
+              td Jonathan
+              td Lollipop
+              td $7.00
+              td #{somename}
+
+
+
+
+    p#jres
+
+

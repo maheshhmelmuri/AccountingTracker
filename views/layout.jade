@@ -1,10 +1,46 @@
 doctype html
 html
-  head
+    script(src='http://ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js')
+        script(src="/javascripts/materialize.min.js")
+        script(src='/javascripts/global.js')
+        script(src='/javascripts/material.min.js')
+        script(src='/javascripts/materialize.min.js')
+        script(src='/javascripts/materialize-pagination.js')
+        script(src='/javascripts/materialize-pagination.min.js')
+        script(src='/javascripts/mdl-selectfield.min.js')
+
+    .header.row.blue
+        .col.s2.header-left
+            .md-toolbar-tools(style='min-height:56px;max-height:56px')
+                a(href='/', onclick='window.location.replace("/");')
+                    img(src='/images/fklogo_small.png', height='35px', style='margin-left:10px; margin-top: 5%')
+                    span.title(style='color: black;') Accounting Tracker
+        //.col.s10.divNavContainer
+        //    nav
+        //        .nav-wrapper.blue
+        //            ul#nav-mobile.right.hide-on-med-and-down
+        //                li
+        //                    a(href='sass.html') Sass
+        //                li
+        //                    a(href='badges.html') Components
+        //                li
+        //                    a(href='collapsible.html') JavaScript
+
+head
     title= title
     link(rel='stylesheet', href='/stylesheets/style.css')
+    link(rel='stylesheet', href='/stylesheets/materialize.css')
+    link(rel='stylesheet', href='/stylesheets/bootstrap.min.css')
+    link(rel='stylesheet', href='/stylesheets/bootstrap-theme.min.css')
+    link(rel='stylesheet', href='/stylesheets/material.css')
+    link(rel='stylesheet', href='/stylesheets/mdl-selectfield.min.css')
+
+
 
     body
-            block content
-            script(src='http://ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js')
-            script(src='/javascripts/global.js')
+        block content
+
+footer.page-footer.footer
+    center
+        small Powered by Accounting at Flipkart.com
+
