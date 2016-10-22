@@ -23,32 +23,21 @@ block content
 
     div
         div.sub-heading#divSummaryHead(style="display:none")
-
-   p Summary
-     table(class="highlight")
-         thead
-            th Tracking_id
-            th Service Type
-            th Payment Type
-            th Seller Id
-          tbody
-            tr
-              td Alvin
-              td Eclair
-              td $0.87
-            tr
-              td Alan
-              td Jellybean
-              td $3.76
-            tr
-              td Jonathan
-              td Lollipop
-              td $7.00
-              td #{somename}
-
-
-
-
-    p#jres
+    div.row(style="padding-top:1%;padding-left:1%;display:none")#divOrderSummary
+        .col.s6
+         table.summaryTable#summaryTable
+            thead
+                tr
+                    th(data-field='search_id') ID
+                    th(data-field='service_type') Service type
+                    th(data-field='payment_type') Payment type
+                    th(data-field='seller_Id') Seller Id
+            tbody
+                tr
+                    td(id='search_id')
+                    td(id='service_type')
+                    td(id='payment_type')
+                    td(id='seller_id')
+                tr
 
 

@@ -1,8 +1,8 @@
 body {
   /*padding: 50px;*/
-  padding-top: 58px;
-  padding-left: 10px;
-  padding-right: 10px;
+  padding-top: 4%;
+  padding-left: 1%;
+  padding-right: 1%;
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
 }
 
@@ -62,4 +62,13 @@ a {
 
 #btnSearch {
   background-color: #0084AB;
+}
+
+table {
+  border-collapse: collapse !important;
+}
+
+table, th, td {
+  border: 1px solid black !important;
+  text-align: center !important;
 }
