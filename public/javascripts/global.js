@@ -14,7 +14,9 @@ var url = '/api';
 
 function fetchData(trackingId)
 {
-    var trackId=$('#inputTrackingId').val();
+    var trackId=$('#inpTrackingId').val();
+    var searchType = $('#inpSearchType').val();
+    searchType = searchType.replace("_"," ");
     console.log(trackId);
     $.get(url,{id:trackId}).done(function (data) {
         console.log(data);
@@ -22,10 +24,15 @@ function fetchData(trackingId)
 
         $('#jres').html(data);
         // window.location.href = "/testSome";
-        $('#divSummaryHead').text("Summary of ID: "+trackId);
+        $('#divSummaryHead').text("Summary of "+searchType+": "+trackId);
         $('#divSummaryHead').show();
         // res.value=data;
         // res.trackId = trackId;
     })
 }
+
+$(document).ready(function() {
+    $('select').material_select();
+});
+
 

@@ -10,6 +10,9 @@ a {
   color: #00B7FF;
 }
 
+.caret {
+  display: none !important;
+}
 
 .footer {
   position: fixed;
@@ -55,4 +58,8 @@ a {
   font-family: "PT Sans","Roboto","Helvetica","Arial";
   width: auto !important;
   font-size: 12px;
+}
+
+#btnSearch {
+  background-color: #0084AB;
 }

@@ -7,11 +7,19 @@ block content
    div
        div.sub-heading search accounting entries
 
-   div.row(style="padding-top:8px")
-       div.col.s2
-           input#inputTrackingId(type='text', placeholder='tracking_id')
-       div.col.s2
+   div.row(style="padding-top:1%;padding-left:1%")
+       .input-field.col.s2
+           select#inpSearchType
+               option(value='Vendor_Tracking_ID') Vendor Tracking ID
+               option(value='Merchant_Ref_ID') Merchant ID
+           label ID
+       .form.col.s2(style="padding-top:0.4%")
+               .input-field.col.s12
+                   input#inpTrackingId(type='text')
+                   label(for='inpTrackingId') SearchId
+        .col.s2(style="padding-top:1.2%")
            button#btnSearch(onclick='fetchData(this)',class="waves-effect waves-light btn") Search
+
 
     div
         div.sub-heading#divSummaryHead(style="display:none")
