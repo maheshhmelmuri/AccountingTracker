@@ -3,7 +3,9 @@
  */
 
 //shipping details
-
+/*jshint globalstrict: true, bitwise: false */
+/*global require: true, exports: true */
+'use strict';
 var shippingDetails = [];
 var responseData = {};
 
