@@ -8,29 +8,47 @@ var Client = require('node-rest-client').Client;
 var authClient = require('./../lib/authn_login_client').getAuthnClient();
 var authnToken = "";
 var client = new Client();
-var tokenHash = {};
+var deferred = require('fk-common-utils').deferred;
 
 
 
-var url = "http://www.mocky.io/v2/5185415ba171ea3a00704eed";
+
+
+// var url = "10.85.50.149:80/v1/invoice/type/payable_credit_note?invoice_ref_2=";
 
 
 router.get('/api',function (req,res,next) {
   // direct way
-  var url = urls.shippingAPI+req.query.id;
+  var url = "http://10.85.50.149:80/v1/invoice/type/payable_credit_note?invoice_ref_2="+req.query.id;
   console.log(url);
   console.log("before authn");
-  tokenHash = authClient.login(request,"AccountingTracker");
-  console.log("token hash from main js " +JSON.stringify(tokenHash));
-  
-  client.get(url, function (data, response) {
-    // parsed response body as js object
-    console.log(JSON.stringify(data,null,2));
-    // raw response
-    //console.log(response);
-    res.send(JSON.stringify(data));
-    // res.render('error',{title: 'error'});
+  var tokenHash = authClient.login(request,"AccountingTracker");
+  console.log("token hash from main js " +tokenHash);
+  tokenHash.pipe(function (result) {
+    // updateHeader(result['token']);
+    console.log("result is" + result['token']);
+    var args = {
+      headers: {
+        "X_BU_ID": "FKMP",
+        "Authorization": "Bearer " + result['token']
+      }
+    };
+    console.log("the url is: "+url);
+    console.log(args);
+    
+    client.get(url, args, function (data, response) {
+
+      // parsed response body as js object
+      console.log("result" + JSON.stringify(data));
+      console.log("raw response "+response);
+      // raw response
+      //console.log(response);
+      res.send(JSON.stringify(data));
+      // res.render('error',{title: 'error'});
+    });
+    return deferred.success(result);
   });
+  
 
 
 

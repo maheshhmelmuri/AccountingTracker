@@ -23,7 +23,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
-
+app.set('port',3377);
 app.use('/', index);
 app.use('/',summary);
 // app.use('/summary', summary);
