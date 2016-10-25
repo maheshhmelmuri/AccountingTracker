@@ -10,16 +10,13 @@ var authnToken = "";
 var client = new Client();
 var deferred = require('fk-common-utils').deferred;
 
-
-
-
-
 // var url = "10.85.50.149:80/v1/invoice/type/payable_credit_note?invoice_ref_2=";
 
 
 router.get('/api',function (req,res,next) {
   // direct way
-  var url = "http://10.85.50.149:80/v1/invoice/type/payable_credit_note?invoice_ref_2="+req.query.id;
+  var url = "http://10.85.50.152:80/v1/invoice/type/payable_credit_note?invoice_ref_2="+req.query.id;
+  // var url = "http://10.85.51.31/accrual/revenue_accrual?external_ref_id="+req.query.id;
   console.log(url);
   console.log("before authn");
   var tokenHash = authClient.login(request,"AccountingTracker");
@@ -30,7 +27,8 @@ router.get('/api',function (req,res,next) {
     var args = {
       headers: {
         "X_BU_ID": "FKMP",
-        "Authorization": "Bearer " + result['token']
+        "Authorization": "Bearer " + result['token'],
+        "content-type": "application/json"
       }
     };
     console.log("the url is: "+url);
@@ -41,8 +39,6 @@ router.get('/api',function (req,res,next) {
       // parsed response body as js object
       console.log("result" + JSON.stringify(data));
       console.log("raw response "+response);
-      // raw response
-      //console.log(response);
       res.send(JSON.stringify(data));
       // res.render('error',{title: 'error'});
     });
