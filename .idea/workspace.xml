@@ -2,8 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="f210eaf5-0248-44ce-a239-e300615b2098" name="Default" comment="">
-      <change type="MOVED" beforePath="$PROJECT_DIR$/authn_login_client.js" afterPath="$PROJECT_DIR$/lib/authn_login_client.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lib/authn_login_client.js" afterPath="$PROJECT_DIR$/lib/authn_login_client.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/routes/summary.js" afterPath="$PROJECT_DIR$/routes/summary.js" />
     </list>
     <ignored path="NodeJsProject.iws" />
@@ -44,11 +43,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="summary.js" pinned="false" current-in-tab="false">
+      <file leaf-file-name="summary.js" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/routes/summary.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="105">
-              <caret line="7" column="67" selection-start-line="7" selection-start-column="67" selection-end-line="7" selection-end-column="67" />
+            <state relative-caret-position="225">
+              <caret line="23" column="66" selection-start-line="23" selection-start-column="66" selection-end-line="23" selection-end-column="66" />
               <folding />
             </state>
           </provider>
@@ -111,18 +110,18 @@
       <file leaf-file-name="global.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/public/javascripts/global.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="139">
+            <state relative-caret-position="-236">
               <caret line="23" column="47" selection-start-line="23" selection-start-column="47" selection-end-line="23" selection-end-column="47" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="authn_login_client.js" pinned="false" current-in-tab="true">
+      <file leaf-file-name="authn_login_client.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/lib/authn_login_client.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="304">
-              <caret line="131" column="2" selection-start-line="131" selection-start-column="2" selection-end-line="131" selection-end-column="2" />
+            <state relative-caret-position="1807">
+              <caret line="132" column="25" selection-start-line="132" selection-start-column="25" selection-end-line="132" selection-end-column="25" />
               <folding />
             </state>
           </provider>
@@ -177,8 +176,8 @@
         <option value="$PROJECT_DIR$/public/javascripts/global.js" />
         <option value="$PROJECT_DIR$/authn_login_client.js" />
         <option value="$PROJECT_DIR$/routes/authn_login_client.js" />
-        <option value="$PROJECT_DIR$/routes/summary.js" />
         <option value="$PROJECT_DIR$/lib/authn_login_client.js" />
+        <option value="$PROJECT_DIR$/routes/summary.js" />
       </list>
     </option>
   </component>
@@ -534,12 +533,12 @@
       <workItem from="1476960172530" duration="20000" />
       <workItem from="1476960207119" duration="7553000" />
       <workItem from="1477031860245" duration="20371000" />
-      <workItem from="1477284724266" duration="17146000" />
+      <workItem from="1477284724266" duration="18253000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="77976000" />
+    <option name="totallyTimeSpent" value="79083000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="23" width="1440" height="813" extended-state="6" />
@@ -989,9 +988,17 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/lib/authn_login_client.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1807">
+          <caret line="132" column="25" selection-start-line="132" selection-start-column="25" selection-end-line="132" selection-end-column="25" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/public/javascripts/global.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="139">
+        <state relative-caret-position="-236">
           <caret line="23" column="47" selection-start-line="23" selection-start-column="47" selection-end-line="23" selection-end-column="47" />
           <folding />
         </state>
@@ -999,16 +1006,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/routes/summary.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="105">
-          <caret line="7" column="67" selection-start-line="7" selection-start-column="67" selection-end-line="7" selection-end-column="67" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/lib/authn_login_client.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="304">
-          <caret line="131" column="2" selection-start-line="131" selection-start-column="2" selection-end-line="131" selection-end-column="2" />
+        <state relative-caret-position="225">
+          <caret line="23" column="66" selection-start-line="23" selection-start-column="66" selection-end-line="23" selection-end-column="66" />
           <folding />
         </state>
       </provider>
