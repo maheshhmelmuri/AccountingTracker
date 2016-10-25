@@ -5,8 +5,8 @@ var httpObj = require('http');
 var urls = require('./URL');
 var https = require('https');
 var Client = require('node-rest-client').Client;
-var authClient = require('./../authn_login_client').getAuthnClient();
-
+var authClient = require('./../lib/authn_login_client').getAuthnClient();
+var authnToken = "";
 var client = new Client();
 
 
@@ -19,8 +19,9 @@ router.get('/api',function (req,res,next) {
   var url = urls.shippingAPI+req.query.id;
   console.log(url);
   console.log("before authn");
-  var token = authClient.login(request,"AccountingTracker");
-  console.log("after authn: "+token);
+  authClient.login(request,"AccountingTracker");
+  console.log("token hash from main js " +JSON.stringify(authClient));
+  
   client.get(url, function (data, response) {
     // parsed response body as js object
     console.log(JSON.stringify(data,null,2));
