@@ -1,23 +1,25 @@
 extends layout
 
 block content
- div(ng-app='AccountingDetail')
-        div(style="padding-bottom:10px")
+ div
+    div(style="padding-bottom:10px")
         .top-heading Welcome to Home Accounting Entries Details
     div
         .sub-heading search accounting entries
     .row(style='padding-top:1%;padding-left:1%',ng-controller='summaryLine')
         .input-field.col.s2
             select#inpBuId
+                each bu in buList
+                    option(value=bu)= bu
             label ID
         .input-field.col.s2
-            select#inpSearchType(ng-model='search_type')
+            select#inpSearchType
                 option(value='Vendor_Tracking_ID') Vendor Tracking ID
                 option(value='Merchant_Ref_ID') Merchant ID
             label ID
         .form.col.s2(style='padding-top:0.4%')
             .input-field.col.s12
-                input#inpTrackingId(type='text',ng-model='search_id')
+                input#inpTrackingId(type='text')
                 label(for='inpTrackingId') SearchId
         .col.s2(style='padding-top:1.2%')
             button#btnSearch.waves-effect.waves-light.btn(onclick='fetchData(this)') Search
@@ -40,5 +42,4 @@ block content
                         td#seller_id
                     tr
 
-
-
+    script(src='javascripts/businessUnit.js')

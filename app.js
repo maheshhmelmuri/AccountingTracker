@@ -29,7 +29,7 @@ app.use('/',summary);
 app.use('/buList',businessUnit);
 // app.use('/summary', summary);
 app.use('/testSome',testSome);
-
+// app.use('/buList',businessUnit);
 //app.use('/',getresponse);
 
 // catch 404 and forward to error handler

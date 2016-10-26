@@ -17,10 +17,10 @@ router.get('/api',function (req,res,next) {
   console.log(url);
   console.log("before authn");
   var tokenHash = authClient.login(request,"AccountingTracker");
-  console.log("token hash from main js " +tokenHash);
+  // console.log("token hash from main js " +tokenHash);
   tokenHash.pipe(function (result) {
     // updateHeader(result['token']);
-    console.log("result is" + result['token']);
+    // console.log("result is" + result['token']);
     var args = {
       headers: {
         "X_BU_ID": "FKMP",
@@ -32,11 +32,10 @@ router.get('/api',function (req,res,next) {
     console.log(args);
     
     client.get(url, args, function (data, response) {
-
       // parsed response body as js object
-      // console.log("result" + JSON.stringify(data));
-      // console.log("raw response "+response);
-      res.send(JSON.stringify(data));
+      console.log("result" + JSON.stringify(data));
+      // console.log("raw response "+JSON.stringify(response));
+      res.send(data);
       // res.render('error',{title: 'error'});
     });
     return deferred.success(result);
