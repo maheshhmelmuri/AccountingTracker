@@ -9,14 +9,11 @@ var authClient = require('./../lib/authn_login_client').getAuthnClient();
 var authnToken = "";
 var client = new Client();
 var deferred = require('fk-common-utils').deferred;
-
-// var url = "10.85.50.149:80/v1/invoice/type/payable_credit_note?invoice_ref_2=";
-
+var config = require('config');
 
 router.get('/api',function (req,res,next) {
   // direct way
   var url = "http://10.85.50.152:80/v1/invoice/type/payable_credit_note?invoice_ref_2="+req.query.id;
-  // var url = "http://10.85.51.31/accrual/revenue_accrual?external_ref_id="+req.query.id;
   console.log(url);
   console.log("before authn");
   var tokenHash = authClient.login(request,"AccountingTracker");
