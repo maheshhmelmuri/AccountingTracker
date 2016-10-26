@@ -34,8 +34,8 @@ router.get('/api',function (req,res,next) {
     client.get(url, args, function (data, response) {
 
       // parsed response body as js object
-      console.log("result" + JSON.stringify(data));
-      console.log("raw response "+response);
+      // console.log("result" + JSON.stringify(data));
+      // console.log("raw response "+response);
       res.send(JSON.stringify(data));
       // res.render('error',{title: 'error'});
     });

@@ -9,6 +9,7 @@ var bodyParser = require('body-parser');
 var index = require('./routes/index');
 var summary = require('./routes/summary');
 var testSome = require('./routes/testSome');
+var businessUnit = require('./routes/businessUnit');
 //var getresponse = require('./routes/GetResponse')
 
 var app = express();
@@ -23,9 +24,9 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
-app.set('port',3377);
 app.use('/', index);
 app.use('/',summary);
+app.use('/buList',businessUnit);
 // app.use('/summary', summary);
 app.use('/testSome',testSome);
 

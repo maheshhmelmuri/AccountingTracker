@@ -1,44 +1,44 @@
 extends layout
 
 block content
-   div(style="padding-bottom:10px")
-     div.top-heading Welcome to Home Accounting Entries Details
-
-   div
-       div.sub-heading search accounting entries
-
-   div.row(style="padding-top:1%;padding-left:1%")
-       .input-field.col.s2
-           select#inpSearchType
-               option(value='Vendor_Tracking_ID') Vendor Tracking ID
-               option(value='Merchant_Ref_ID') Merchant ID
-           label ID
-       .form.col.s2(style="padding-top:0.4%")
-               .input-field.col.s12
-                   input#inpTrackingId(type='text')
-                   label(for='inpTrackingId') SearchId
-        .col.s2(style="padding-top:1.2%")
-           button#btnSearch(onclick='fetchData(this)',class="waves-effect waves-light btn") Search
-
-
-   div
-        div.sub-heading#divSummaryHead(style="display:none")
-   div.row(style="padding-top:1%;padding-left:1%;display:none")#divOrderSummary
+ div(ng-app='AccountingDetail')
+        div(style="padding-bottom:10px")
+        .top-heading Welcome to Home Accounting Entries Details
+    div
+        .sub-heading search accounting entries
+    .row(style='padding-top:1%;padding-left:1%',ng-controller='summaryLine')
+        .input-field.col.s2
+            select#inpBuId
+            label ID
+        .input-field.col.s2
+            select#inpSearchType(ng-model='search_type')
+                option(value='Vendor_Tracking_ID') Vendor Tracking ID
+                option(value='Merchant_Ref_ID') Merchant ID
+            label ID
+        .form.col.s2(style='padding-top:0.4%')
+            .input-field.col.s12
+                input#inpTrackingId(type='text',ng-model='search_id')
+                label(for='inpTrackingId') SearchId
+        .col.s2(style='padding-top:1.2%')
+            button#btnSearch.waves-effect.waves-light.btn(onclick='fetchData(this)') Search
+    div
+        #divSummaryHead.sub-heading(style='display:none')
+    #divOrderSummary.row(style='padding-top:1%;padding-left:1%;display:none')
         .col.s6
-         table.summaryTable#summaryTable
-            thead
-                tr
-                    th(data-field='search_id') ID
-                    th(data-field='service_type') Service type
-                    th(data-field='payment_type') Payment type
-                    th(data-field='seller_Id') Seller Id
-            tbody
-                tr
-                    td(id='search_id')
-                    td(id='service_type')
-                    td(id='payment_type')
-                    td(id='seller_id')
-                tr
+            table#summaryTable.summaryTable
+                thead
+                    tr
+                        th(data-field='search_id') ID
+                        th(data-field='service_type') Service type
+                        th(data-field='payment_type') Payment type
+                        th(data-field='seller_Id') Seller Id
+                tbody
+                    tr
+                        td#search_id
+                        td#service_type
+                        td#payment_type
+                        td#seller_id
+                    tr
 
 
 

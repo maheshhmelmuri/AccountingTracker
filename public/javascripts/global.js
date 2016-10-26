@@ -1,19 +1,28 @@
 /**
  * Created by mahesh.melmuri on 17/10/16.
  */
-
+///<reference path="angular.min.js" />
 //shipping details
 /*jshint globalstrict: true, bitwise: false */
 /*global require: true, exports: true */
 'use strict';
 var shippingDetails = [];
 var responseData = {};
-
+// var angular = require('./angular.min');
 // $(document).ready(function () {
 //     fetchData();
 //
 // });
+
 var url = '/api';
+
+// angular.module('AccountingDetail')
+//     .controller('summaryLine',function ($global) {
+//         $global.search_type = "";
+//         $global.search_id = "";
+//     });
+
+
 
 function fetchData(trackingId)
 {
@@ -32,6 +41,8 @@ function fetchData(trackingId)
         $('#divOrderSummary').show();
     })
 }
+
+
 
 function fillSummaryTableData() {
     var summaryDetail = {};
