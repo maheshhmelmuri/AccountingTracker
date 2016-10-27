@@ -11,16 +11,16 @@ block content
             select#inpBuId
                 each bu in buList
                     option(value=bu)= bu
-            label ID
+            label Bu Name
         .input-field.col.s2
             select#inpSearchType
                 option(value='Vendor_Tracking_ID') Vendor Tracking ID
                 option(value='Merchant_Ref_ID') Merchant ID
-            label ID
+            label Search By
         .form.col.s2(style='padding-top:0.4%')
             .input-field.col.s12
                 input#inpTrackingId(type='text')
-                label(for='inpTrackingId') SearchId
+                label(for='inpTrackingId') Search Id
         .col.s2(style='padding-top:1.2%')
             button#btnSearch.waves-effect.waves-light.btn(onclick='fetchData(this)') Search
     div
