@@ -4,10 +4,10 @@
 
 var express = require('express');
 var router = express.Router();
-var urlConfig = require('./URL');
+var urlConfig = require('./url');
 var https = require('https');
 var Client = require('node-rest-client').Client;
-var authClient = require('./../lib/authn_login_client').getAuthnClient();
+var authClient = require('./../lib/authn-login-client').getAuthnClient();
 var authnToken = "";
 var client = new Client();
 var deferred = require('fk-common-utils').deferred;

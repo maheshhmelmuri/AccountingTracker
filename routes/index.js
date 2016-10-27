@@ -4,9 +4,9 @@ var Client = require('node-rest-client').Client;
 var client = new Client();
 
 
-var urlConfig = require('./URL');
+var urlConfig = require('./url');
 var https = require('https');
-var authClient = require('./../lib/authn_login_client').getAuthnClient();
+var authClient = require('./../lib/authn-login-client').getAuthnClient();
 var authnToken = "";
 var deferred = require('fk-common-utils').deferred;
 var config = require('config');
@@ -16,11 +16,14 @@ var buList=[];
 /* GET home page. */
 router.get('/', function(req, res, next) {
   var random= 'my main application';
-  fecthBusinessUnit();
-  res.render('home', { title: 'Accounting Tracker', buList: buList});
-  
+  // fecthBusinessUnit('',function(returnValue) {
+    fetchBusinessUnit();
+      console.log("started rendering");
+      res.render('home', { title: 'Accounting Tracker', buList: buList});
+  // });
 });
-function fecthBusinessUnit() {
+
+function fetchBusinessUnit() {
     var url = urlConfig.buListAPI;
     console.log(url);
     var tokenHash = authClient.login(request,"AccountingTracker");
@@ -40,6 +43,7 @@ function fecthBusinessUnit() {
                 buList.push(data[i]["name"]);
             }
         });
+        console.log("value returned");
         return deferred.success(result);
     });
 }
