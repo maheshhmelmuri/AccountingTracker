@@ -10,40 +10,16 @@ var authnToken = "";
 var client = new Client();
 var deferred = require('fk-common-utils').deferred;
 var config = require('config');
+var clientHelper = require('./../lib/client-helper');
+var header = {};
 
 router.get('/api',function (req,res,next) {
   // direct way
-  var url = "http://10.85.50.152:80/v1/invoice/type/payable_credit_note?invoice_ref_2="+req.query.id;
-  console.log(url);
-  console.log("before authn");
-  var tokenHash = authClient.login(request,"AccountingTracker");
-  // console.log("token hash from main js " +tokenHash);
-  tokenHash.pipe(function (result) {
-    // updateHeader(result['token']);
-    // console.log("result is" + result['token']);
-    var args = {
-      headers: {
-        "X_BU_ID": "FKMP",
-        "Authorization": "Bearer " + result['token'],
-        "content-type": "application/json"
-      }
-    };
-    console.log("the url is: "+url);
-    console.log(args);
-    
-    client.get(url, args, function (data, response) {
-      // parsed response body as js object
-      console.log("result" + JSON.stringify(data));
-      // console.log("raw response "+JSON.stringify(response));
-      res.send(data);
-      // res.render('error',{title: 'error'});
-    });
-    return deferred.success(result);
+  var result = clientHelper.getHelper().execute('get',header,'invoice','FKMP');
+  return result.pipe(function(token) {
+    console.log("api first result sent below "+ JSON.stringify(result));
+    res.send(token);
   });
-  
-
-
-
 });
 
 

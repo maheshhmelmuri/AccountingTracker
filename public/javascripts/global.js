@@ -29,10 +29,12 @@ function fetchData(trackingId)
     var trackId=$('#inpTrackingId').val();
     var searchType = $('#inpSearchType').val();
     searchType = searchType.split('_').join(' ');
+    var BuName = $('#inpBuId').val();
     console.log(trackId);
     readResponse(); //check with removing later
     $.get(url,{id:trackId}).done(function (data) {
         console.log(data);
+        $('#payload').html(JSON.stringify(data));
         $('#jres').html(data);
         fillSummaryTableData(); //check with removing later
         var summaryHead = $('#divSummaryHead');

@@ -9,7 +9,7 @@ block content
     .row(style='padding-top:1%;padding-left:1%',ng-controller='summaryLine')
         .input-field.col.s2
             select#inpBuId
-                each bu in buList
+                each bu in buList.toArray()
                     option(value=bu)= bu
             label Bu Name
         .input-field.col.s2
@@ -41,5 +41,6 @@ block content
                         td#payment_type
                         td#seller_id
                     tr
+    p#payload
 
     script(src='javascripts/business-unit.js')
