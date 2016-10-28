@@ -12,10 +12,10 @@ block content
                 each bu in buList.toArray()
                     option(value=bu)= bu
             label Bu Name
-        .input-field.col.s2
+        .input-field.col.s2#inpSearchDisplay
             select#inpSearchType
-                option(value='Vendor_Tracking_ID') Vendor Tracking ID
-                option(value='Merchant_Ref_ID') Merchant ID
+                option(value='vendor_tracking_id') Vendor Tracking ID
+                option(value='merchant_ref_id') Merchant ID
             label Search By
         .form.col.s2(style='padding-top:0.4%')
             .input-field.col.s12

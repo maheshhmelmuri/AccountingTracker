@@ -19,7 +19,7 @@ var buList = new Set();
 /* GET home page. */
 router.get('/', function(req, res, next) {
   var random= 'my main application';
-   var buData = fetchBusinessUnit();
+  var buData = fetchBusinessUnit();
     buData.pipe(function (callbacks) {
         res.render('home', { title: 'Accounting Tracker', buList: buList});
     });

@@ -8,40 +8,36 @@
 'use strict';
 var shippingDetails = [];
 var responseData = {};
-// var angular = require('./angular.min');
-// $(document).ready(function () {
-//     fetchData();
-//
-// });
+var BuName;
 
 var url = '/api';
-
-// angular.module('AccountingDetail')
-//     .controller('summaryLine',function ($global) {
-//         $global.search_type = "";
-//         $global.search_id = "";
-//     });
-
 
 
 function fetchData(trackingId)
 {
     var trackId=$('#inpTrackingId').val();
     var searchType = $('#inpSearchType').val();
-    searchType = searchType.split('_').join(' ');
-    var BuName = $('#inpBuId').val();
+    var searchDisplay = $('#inpSearchDispay input').val();
+    var summaryHead = $('#divSummaryHead');
+    // searchType = searchType.split('_').join(' ');
+    BuName = $('#inpBuId').val();
     console.log(trackId);
     readResponse(); //check with removing later
-    $.get('/api',{id:trackId}).done(function (data) {
+    $.get(url,{id:trackId, BU:BuName, type:searchType}).done(function (data) {
         console.log(data);
         $('#payload').html(JSON.stringify(data));
         $('#jres').html(data);
         fillSummaryTableData(); //check with removing later
-        var summaryHead = $('#divSummaryHead');
-        summaryHead.text("Summary of "+searchType+": "+trackId);
+        summaryHead.text("Summary of "+searchDisplay+": "+trackId);
         summaryHead.show();
         $('#divOrderSummary').show();
     })
+        .fail(function(data) {
+            $('#divOrderSummary').hide();
+            summaryHead.text("No data Found");
+            summaryHead.show();
+            $('#payload').html("");
+        });
 
     $.get('/pdn',{id:trackId}).done(function (data) {
         console.log(data);
@@ -61,7 +57,7 @@ function fetchData(trackingId)
 
     // $.get('/racc',{id:trackId}).done(function (data) {
     //     console.log(data);
-    // })
+    // });
 
     // $.get('/cacc',{id:trackId}).done(function (data) {
     //     console.log(data);
