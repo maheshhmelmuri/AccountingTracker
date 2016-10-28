@@ -8,7 +8,13 @@
   "FKMP_url" : {
     "shipping": "http://10.85.50.117/shipments/get_all_shipment_details?",
     "invoice": "http://10.85.50.152:80/v1/invoice/type/payable_credit_note?invoice_ref_2=OD607221256221568003",
-    "accrual": "http://10.85.51.31/accrual/revenue_accrual",
+    "invoice_pcn": "http://10.85.50.152:80/v1/invoice/type/payable_credit_note",
+    "invoice_pdn": "http://10.85.50.152:80/v1/invoice/type/payable_debit_note",
+    "invoice_rcn": "http://10.85.50.152:80/v1/invoice/type/receivable_credit_note",
+    "invoice_rdn": "http://10.85.50.152:80/v1/invoice/type/receivable_debit_note",
+    "accrual": "http://10.85.51.31/accrual",
+    "revenue_accrual": "http://10.85.51.31/accrual/revenue_accrual",
+    "cost_accrual": "http://10.85.51.31/accrual/cost_accrual",
     "businessUnit": "http://10.85.52.146:80/business_unit"
   },
   "invoice" : {

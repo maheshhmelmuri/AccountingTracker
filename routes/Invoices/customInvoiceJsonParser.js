@@ -6,7 +6,10 @@ module.exports =
     customInvJParser: function customInvoiceJsonParser(rawJson) {
         var jsonReader = JSON.parse(rawJson);
         var jsonOutput = {};
+        var jsonData = [];
         for (var i = 0; i < jsonReader.invoices.length; i++) {
+            jsonOutput = {};
+            jsonData[i] = {};
             jsonOutput["Type"] = jsonReader.invoices[i].type;
             jsonOutput["SubType"] = "Sale";
             jsonOutput["Amount"] = jsonReader.invoices[i].total_amount;
@@ -17,9 +20,10 @@ module.exports =
             jsonOutput["Setteled Date"] = dateFormatter(jsonReader.invoices[i].due_date);
             jsonOutput["Payment/disbursement id"] = "null";
             jsonOutput["is Datafix"] = "Manual";
+            jsonData[i] = jsonOutput;
 
         }
-        return JSON.stringify(jsonOutput);
+        return JSON.stringify(jsonData);
 
     },
 

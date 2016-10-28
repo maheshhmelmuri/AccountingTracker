@@ -14,3 +14,4 @@ bin/
 .idea/
 node_modules/
 npm-debug.log
+.lib/authn-config.js

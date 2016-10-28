@@ -43,9 +43,9 @@ function fetchData(trackingId)
         $('#divOrderSummary').show();
     })
 
-    // $.get('/pdn',{id:trackId}).done(function (data) {
-    //     console.log(data);
-    // })
+    $.get('/pdn',{id:trackId}).done(function (data) {
+        console.log(data);
+    })
     //
     // $.get('/rcn',{id:trackId}).done(function (data) {
     //     console.log(data);
@@ -59,9 +59,9 @@ function fetchData(trackingId)
     //     console.log(data);
     // })
 
-    $.get('/racc',{id:trackId}).done(function (data) {
-        console.log(data);
-    })
+    // $.get('/racc',{id:trackId}).done(function (data) {
+    //     console.log(data);
+    // })
 
     // $.get('/cacc',{id:trackId}).done(function (data) {
     //     console.log(data);

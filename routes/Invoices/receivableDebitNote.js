@@ -1,50 +1,22 @@
-/**
- * Created by mahesh.melmuri on 27/10/16.
- */
-/**
- * Created by mahesh.melmuri on 27/10/16.
- */
-
 var express = require('express');
 var router = express.Router();
-var request = require('request');
-var https = require('https');
-var Client = require('node-rest-client').Client;
-var client = new Client();
-var deferred = require('fk-common-utils').deferred;
-var authnConfig = require('../../lib/authn-config');
+var clientHelper = require('../../lib/client-helper');
 var customInvJParser = require('./customInvoiceJsonParser');
-var urls = require('../URL');
-var authClient = require('../../lib/authn-login-client').getAuthnClient();
+var header = {};
+var buId = "FKMP";
 var rawJson = null;
 
 router.get('/',function (req,res,next) {
     // direct way
-    var url = "http://10.85.50.152:80/v1/invoice/type/receivable_debit_note?external_ref_id="+req.query.id;
-    var tokenHash = authClient.login(request,authnConfig.clientId);
-    tokenHash.pipe(function (result) {
-        var args = {
-            headers: {
-                "X_BU_ID": "EKL",
-                "Authorization": "Bearer " + result['token'],
-                "content-type": "application/json"
-            }
-        };
-
-        client.get(url, args, function (data, response) {
-            // parsed response body as js object
-            console.log("in rdn");
-            rawJson = JSON.stringify(data);
-            console.log(customInvJParser.customInvJParser(rawJson));
-
-            res.send(data);
-            // res.render('error',{title: 'error'});
-        });
-        return deferred.success(result);
+    console.log("in rdn");
+    var result = clientHelper.getHelper().execute('get',header,'invoice_rdn',buId);
+    return result.pipe(function(token) {
+        //console.log("api first result sent below "+ JSON.stringify(result));
+        rawJson = JSON.stringify(result);
+        console.log(customInvJParser.customInvJParser(rawJson));
+        res.send(token);
     });
-
 });
 
 
 module.exports = router;
-
