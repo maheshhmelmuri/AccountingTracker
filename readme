@@ -1,0 +1,4 @@
+some extra packages to install:
+npm install --save collections (for sets being used in BU list)
+npm install jquery
+npm install hashmap // used to parse the hashmap

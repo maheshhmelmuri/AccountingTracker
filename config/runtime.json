@@ -1,6 +1,24 @@
 {
-  "summaryTable" : {
-    "type" : "abcd",
-    "id" : "orderid"
+  "EKL_url" : {
+    "shipping": "http://10.85.50.117/shipments/get_all_shipment_details?",
+    "invoice": "http://10.85.50.152:80/v1/invoice/type",
+    "accrual": "http://10.85.51.31/accrual/revenue_accrual",
+    "businessUnit": "http://10.85.52.146:80/business_unit"
+  },
+  "FKMP_url" : {
+    "shipping": "http://10.85.50.117/shipments/get_all_shipment_details?",
+    "invoice": "http://10.85.50.152:80/v1/invoice/type/payable_credit_note?invoice_ref_2=OD607221256221568003",
+    "accrual": "http://10.85.51.31/accrual/revenue_accrual",
+    "businessUnit": "http://10.85.52.146:80/business_unit"
+  },
+  "invoice" : {
+    "type": ["payable_credit_note"]
+  },
+  "FKMP_invoice" : {
+    "vendor_tracking_id": "reporting_ref_2"
+  },
+  "EKL_shipping": {
+    "vendor_tracking_id": "reporting_ref_2",
+    "merchant_ref_id": "reporting_ref_3"
   }
 }

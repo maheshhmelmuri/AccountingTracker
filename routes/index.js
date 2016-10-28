@@ -12,38 +12,35 @@ var deferred = require('fk-common-utils').deferred;
 var config = require('config');
 var request = require('request');
 var httpObj = require('http');
-var buList=[];
+var Set = require("collections/set");
+var clientHelper = require('./../lib/client-helper');
+var BU;
+var buList = new Set();
 /* GET home page. */
 router.get('/', function(req, res, next) {
   var random= 'my main application';
-  // fecthBusinessUnit('',function(returnValue) {
-      fetchBusinessUnit();
-      console.log("started rendering");
-      res.render('home', { title: 'Accounting Tracker', buList: buList});
-
-  // });
+  // fetchBusinessUnit(function(returnValue) {
+  //   getlist(fetchBusinessUnit);
+  //   function getlist(fetchBusinessUnit) {
+   var buData = fetchBusinessUnit();
+        // res.render('home', { title: 'Accounting Tracker', buList: buList});
+    // }
+    buData.pipe(function (callbacks) {
+        res.render('home', { title: 'Accounting Tracker', buList: buList});
+    });
 });
 
 function fetchBusinessUnit() {
     var url = urlConfig.buListAPI;
     console.log(url);
-    var tokenHash = authClient.login(request,"AccountingTracker");
-    tokenHash.pipe(function (result) {
-        var args = {
-            headers: {
-                "Authorization": "Bearer " + result['token'],
-                "content-type": "application/json",
-                "X_BU_ID": "FKMP"
-            }
-        };
-        client.get(url, args, function (data, response) {
-            console.log("result" + JSON.stringify(data));
-            for(var i=0;i<data.length;i++){
-                // console.log(data[i]["name"]);
-                buList.push(data[i]["name"]);
-            }
-        });
-        console.log("value returned");
+    var header = {};
+    var result = clientHelper.getHelper().execute('get',header,'businessUnit','FKMP');
+    return result.pipe(function(data) {
+        for(var i=0;i<data.length;i++){
+            buList.add(data[i]["name"]);
+            console.log(data[i]);
+        }
+        console.log("result in main fetchBusiness"+JSON.stringify(data));
         return deferred.success(result);
     });
 }
