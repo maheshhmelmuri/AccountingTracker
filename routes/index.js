@@ -17,9 +17,10 @@ var buList=[];
 router.get('/', function(req, res, next) {
   var random= 'my main application';
   // fecthBusinessUnit('',function(returnValue) {
-    fetchBusinessUnit();
+      fetchBusinessUnit();
       console.log("started rendering");
       res.render('home', { title: 'Accounting Tracker', buList: buList});
+
   // });
 });
 
@@ -35,7 +36,6 @@ function fetchBusinessUnit() {
                 "X_BU_ID": "FKMP"
             }
         };
-        console.log("fron bu fetch: "+ JSON.stringify(args));
         client.get(url, args, function (data, response) {
             console.log("result" + JSON.stringify(data));
             for(var i=0;i<data.length;i++){

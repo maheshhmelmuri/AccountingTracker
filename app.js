@@ -10,6 +10,12 @@ var index = require('./routes/index');
 var summary = require('./routes/summary');
 var testSome = require('./routes/test-some');
 var businessUnit = require('./routes/business-unit');
+var payableDebitNote = require('./routes/invoices/payableDebitNote');
+var payableCreditNote = require('./routes/invoices/payableCreditNote');
+var receivableCreditNote = require('./routes/invoices/receivableCreditNote');
+var receivableDebitNote = require('./routes/invoices/receivableDebitNote');
+var revenueAccrual = require('./routes/accruals/revenueAccrual');
+var costAccrual = require('./routes/accruals/costAccrual');
 
 var app = express();
 
@@ -27,6 +33,12 @@ app.use('/', index);
 app.use('/',summary);
 app.use('/buList',businessUnit);
 app.use('/testSome',testSome);
+app.use('/pdn',payableDebitNote);
+app.use('/pcn',payableCreditNote);
+app.use('/rcn',receivableCreditNote);
+app.use('/rdn',receivableDebitNote);
+app.use('/racc',revenueAccrual);
+app.use('/cacc',costAccrual);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

@@ -2,8 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/AccountingTracker.iml" filepath="$PROJECT_DIR$/.idea/AccountingTracker.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/AccountingTracker.iml" filepath="$PROJECT_DIR$/.idea/AccountingTracker.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/NodeJsProject.iml" filepath="$PROJECT_DIR$/.idea/NodeJsProject.iml" />
     </modules>
   </component>
 </project>
