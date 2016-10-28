@@ -32,7 +32,7 @@ function fetchData(trackingId)
     var BuName = $('#inpBuId').val();
     console.log(trackId);
     readResponse(); //check with removing later
-    $.get(url,{id:trackId}).done(function (data) {
+    $.get('/api',{id:trackId}).done(function (data) {
         console.log(data);
         $('#payload').html(JSON.stringify(data));
         $('#jres').html(data);
@@ -42,6 +42,31 @@ function fetchData(trackingId)
         summaryHead.show();
         $('#divOrderSummary').show();
     })
+
+    // $.get('/pdn',{id:trackId}).done(function (data) {
+    //     console.log(data);
+    // })
+    //
+    // $.get('/rcn',{id:trackId}).done(function (data) {
+    //     console.log(data);
+    // })
+    //
+    // $.get('/rdn',{id:trackId}).done(function (data) {
+    //     console.log(data);
+    // })
+    //
+    // $.get('/pcn',{id:trackId}).done(function (data) {
+    //     console.log(data);
+    // })
+
+    $.get('/racc',{id:trackId}).done(function (data) {
+        console.log(data);
+    })
+
+    // $.get('/cacc',{id:trackId}).done(function (data) {
+    //     console.log(data);
+    //
+    // })
 }
 
 

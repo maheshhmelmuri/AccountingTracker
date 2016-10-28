@@ -28,7 +28,6 @@ router.get('/', function(req, res, next) {
     buData.pipe(function (callbacks) {
         res.render('home', { title: 'Accounting Tracker', buList: buList});
     });
-
 });
 
 function fetchBusinessUnit() {

@@ -33,8 +33,6 @@ router.get('/' ,function (req,res,next) {
                 "X_BU_ID": "FKMP"
             }
         };
-        console.log("the url is: "+url);
-        console.log("args in bu"+args);
     
         client.get(url, args, function (data, response) {
     
