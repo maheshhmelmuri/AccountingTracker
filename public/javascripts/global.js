@@ -15,8 +15,10 @@ var searchType;
 var tableLayout = "";
 var invoiceTable = "";
 responseData['invoice'] = {};
-
+responseData['accrual'] = {};
 var url = '/api';
+
+var syncCount = 0;
 
 var buOptionMapping = '{"FKMP":\
                                 {\
@@ -63,7 +65,7 @@ function fetchData(trackingId)
         createInvoiceHeader();
         //once table data found call the invoice api
         fetchInvoiceDetails();
-        fetchPDN();
+        // fillInvoiceTableData();
     }).fail(function (data) {
         console.log("failed while fetching header data");
     });
@@ -87,6 +89,34 @@ function fetchData(trackingId)
         });*/
 }
 
+function fillInvoiceTableData()  {
+    console.log("in fill invoice table: ");
+    // if(syncCount > 0) {
+    //     console.log("count is: "+syncCount);
+    //     // sleepFor(5000);
+    //     // console.log("sleeping for 5 sec");
+    //     fillInvoiceTableData();
+    // } else {
+    console.log("responseData: "+ JSON.stringify(responseData));
+        if(responseData['invoice']['receivable_credit_note'] != null || responseData['invoice']['receivable_credit_note'] != undefined) {
+            fillInvoiceRow(responseData['invoice']['receivable_credit_note']);
+        }
+
+        if(responseData['invoice']['payable_debit_note'] != null || responseData['invoice']['payable_debit_note'] != undefined) {
+            fillInvoiceRow(responseData['invoice']['payable_debit_note']);
+        }
+
+    if(responseData['invoice']['receivable_debit_note'] != null || responseData['invoice']['receivable_debit_note'] != undefined) {
+        fillInvoiceRow(responseData['invoice']['receivable_debit_note']);
+    }
+
+    if(responseData['invoice']['payable_credit_note'] != null || responseData['invoice']['payable_credit_note'] != undefined) {
+        fillInvoiceRow(responseData['invoice']['payable_credit_note']);
+    }
+
+        closeTable();
+    // }
+}
 
 function fillSUmmaryTable() {
     var summaryHead = $('#divSummaryHead');
@@ -113,47 +143,90 @@ function fillSUmmaryTable() {
 }
 
 function fetchInvoiceDetails() {
+    fetchRCN();
+
+    fetchPDN();
+
+    fetchPcnData();
+
+    fetchRdnData();
+    // callback();
+
+}
+
+function fetchRCN() {
+    ++syncCount;
     console.log("calling RCN");
     $.get('/rcn',{id:trackId,type:searchType,BU:BuName}).done(function (data) {
         Materialize.toast('RCN Details found!', 4000);
         responseData['invoice']['receivable_credit_note'] = data['receivable_credit_note'];
-        fillInvoiceRow(responseData['invoice']['receivable_credit_note']);
+        // fillInvoiceRow(responseData['invoice']['receivable_credit_note']);
+        --syncCount;
+        if(syncCount == 0) {
+            fillInvoiceTableData();
+        }
         // closeTable();
     }).fail(function(data) {
         console.log("failed while fetching RCN");
+        --syncCount;
+        if(syncCount == 0) {
+            fillInvoiceTableData();
+        }
     });
-
 }
-
-function fetchPDN() {
-
-    $.get('/pdn',{id:trackId,type:searchType,BU:BuName}).done(function (data) {
-        Materialize.toast('PDN Details found!', 4000);
-        responseData['invoice']['payable_debit_note'] = data['payable_debit_note'];
-        fillInvoiceRow(responseData['invoice']['payable_debit_note']);
-        closeTable();
-    }).fail(function(data) {
-        console.log("failed while fetching PDN");
+function fetchRdnData() {
+    ++syncCount;
+    $.get('/rdn', {id: trackId, type: searchType, BU: BuName}).done(function (data) {
+        Materialize.toast('RDN Details found!', 4000);
+        responseData['invoice']['receivable_debit_note'] = data['receivable_debit_note'];
+        --syncCount;
+        if(syncCount == 0) {
+            fillInvoiceTableData();
+        }
+    }).fail(function (data) {
+        console.log("failed while fetching rdn");
+        --syncCount;
+        if(syncCount == 0) {
+            fillInvoiceTableData();
+        }
     });
 }
 
 function fetchPcnData() {
+    ++syncCount;
     $.get('/pcn',{id:trackId,type:searchType,BU:BuName}).done(function (data) {
-        console.log("fetched pcn data");
-        console.log(data);
-        return data;
+        Materialize.toast('PCN Details found!', 4000);
+        responseData['invoice']['payable_credit_note'] = data['payable_credit_note'];
+        --syncCount;
+        if(syncCount == 0) {
+            fillInvoiceTableData();
+        }
     }).fail(function(data) {
         console.log("failed while fetching PCN");
+        --syncCount;
+        if(syncCount == 0) {
+            fillInvoiceTableData();
+        }
     });
 }
 
-function fetchRdnData() {
-    $.get('/rdn', {id: trackId, type: searchType, BU: BuName}).done(function (data) {
-        console.log("fetched rdn data");
-        console.log(data);
-        return data;
-    }).fail(function (data) {
-        console.log("failed while fetching rdn");
+function fetchPDN() {
+    ++syncCount;
+    $.get('/pdn',{id:trackId,type:searchType,BU:BuName}).done(function (data) {
+        Materialize.toast('PDN Details found!', 4000);
+        responseData['invoice']['payable_debit_note'] = data['payable_debit_note'];
+        // fillInvoiceRow(responseData['invoice']['payable_debit_note']);
+        // closeTable();
+        --syncCount;
+        if(syncCount == 0) {
+            fillInvoiceTableData();
+        }
+    }).fail(function(data) {
+        console.log("failed while fetching PDN");
+        --syncCount;
+        if(syncCount == 0) {
+            fillInvoiceTableData();
+        }
     });
 }
 
@@ -167,6 +240,7 @@ function closeTable() {
 
 
 function fillInvoiceRow(res) {
+    console.log(JSON.stringify(res));
     $.each(res, function(rows) {
        invoiceTable += '<tr>';
        $.each(res[rows],function(rowHead,rowVal) {
@@ -184,7 +258,7 @@ function createInvoiceHeader() {
     });
     invoiceTable += '</tr></thead>';
 
-    invoiceTable += '<tboby><tr>';
+    invoiceTable += '<tboby>';
     // $.each(responseData[])
 }
 
