@@ -8,14 +8,17 @@ block content
         .sub-heading search accounting entries
     .row(style='padding-top:1%;padding-left:1%',ng-controller='summaryLine')
         .input-field.col.s2
-            select#inpBuId
-                each bu in buList.toArray()
-                    option(value=bu)= bu
+            select#inpBuId(onchange='changeSearchBy(this)')
+                //each bu in buList.toArray()
+                    //option(value=bu)= bu
+                option.disabled.selected(value='') Choose a BU
+                option(value='FKMP') FKMP
+                option(value='EKL' ) EKL
             label Bu Name
         .input-field.col.s2#inpSearchDisplay
             select#inpSearchType
-                option(value='vendor_tracking_id') Vendor Tracking ID
-                option(value='merchant_ref_id') Merchant ID
+                //option(value='vendor_tracking_id') Vendor Tracking ID
+                //option(value='merchant_ref_id') Merchant ID
             label Search By
         .form.col.s2(style='padding-top:0.4%')
             .input-field.col.s12

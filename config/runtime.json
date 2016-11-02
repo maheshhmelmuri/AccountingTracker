@@ -22,11 +22,25 @@
     "type": ["payable_credit_note"]
   },
   "FKMP_invoice" : {
-    "vendor_tracking_id": "external_ref_id",
-    "merchant_ref_id": "invoice_ref_2"
+    "merchant_ref_id": "external_ref_id",
+    "order_id": "invoice_ref_2"
+  },
+  "FKMP_invoice_pdn" : {
+    "merchant_ref_id": "external_ref_id",
+    "order_id": "invoice_ref_2"
+  },
+  "FKMP_invoice_rcn" : {
+    "merchant_ref_id": "external_ref_id",
+    "order_id": "invoice_ref_2"
   },
   "EKL_shipping": {
     "vendor_tracking_id": "reporting_ref_2",
     "merchant_ref_id": "reporting_ref_3"
+  },
+  "table_definition" : {
+    "FKMP": {
+      "invoice": ["Type","SubType","Amount","Created Date","Updated Date","Due Date","Settled Date","Payment/disbursement Id","isdatafix"],
+      "accrual": ["Type","Fee Name","Amount","Tax","Total amount","Created Date","Updated Date","Due Date","Settled Date","Payment/disbursement Id","isdatafix"]
+    }
   }
 }

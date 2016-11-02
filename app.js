@@ -16,6 +16,7 @@ var receivableCreditNote = require('./routes/invoices/receivableCreditNote');
 var receivableDebitNote = require('./routes/invoices/receivableDebitNote');
 var revenueAccrual = require('./routes/accruals/revenueAccrual');
 var costAccrual = require('./routes/accruals/costAccrual');
+var tableHeader = require('./routes/tableHeader');
 
 var app = express();
 
@@ -39,6 +40,7 @@ app.use('/rcn',receivableCreditNote);
 app.use('/rdn',receivableDebitNote);
 app.use('/racc',revenueAccrual);
 app.use('/cacc',costAccrual);
+app.use('/headerDef',tableHeader);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

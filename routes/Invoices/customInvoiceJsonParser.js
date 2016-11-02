@@ -23,11 +23,11 @@ module.exports =
             jsonData[i] = jsonOutput;
 
         }
-        return JSON.stringify(jsonData);
+        return jsonData;
 
-    },
+    }
 
-}
+};
 function dateFormatter(inputDate) {
     return inputDate.toString().substring(0, 10) + " " + inputDate.toString().substring(11, 19).toString();
 }

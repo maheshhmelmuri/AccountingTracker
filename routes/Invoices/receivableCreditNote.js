@@ -2,21 +2,23 @@ var express = require('express');
 var router = express.Router();
 var clientHelper = require('../../lib/client-helper');
 var customInvJParser = require('./customInvoiceJsonParser');
+var deferred = require('fk-common-utils').deferred;
 var header = {};
-var buId = "FKMP";
 var rawJson = null;
 
 router.get('/',function (req,res,next) {
     // direct way
     console.log("in rcn");
-    var result = clientHelper.getHelper().execute('get',header,'invoice_rcn',buId);
-    return result.pipe(function(token) {
-        //console.log("api first result sent below "+ JSON.stringify(result));
+    paramHash = {};
+    paramHash[req.query.type] = req.query.id;
+    var result = clientHelper.getHelper().execute('get',header,'invoice_rcn',req.query.BU, paramHash);
+    return result.pipe(function(result) {
         rawJson = JSON.stringify(result);
-        console.log(customInvJParser.customInvJParser(rawJson));
-        res.send(token);
+        var rcn = {};
+        rcn["receivable_credit_note"] = customInvJParser.customInvJParser(rawJson);
+        console.log("final rcn output: "+ JSON.stringify(rcn));
+        deferred.success(res.send(rcn));
     });
 });
-
 
 module.exports = router;
