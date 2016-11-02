@@ -51,37 +51,48 @@ function fetchData(trackingId)
     // searchType = searchType.split('_').join(' ');
     BuName = $('#inpBuId').val();
     console.log(trackId);
-    // var pdnData = fetchPdnData();
+    var pdnData = fetchPdnData();
     // console.log("after pdn");
-    // console.log("pdn data :"+pdnData);
-    // readResponse(pdnData); // should add
-    // var rcnData = fetchRcnData();
+     console.log("pdn data :"+pdnData);
+    //readResponse(pdnData); // should add
+     var rcnData = fetchRcnData();
     // console.log("after rcn");
-    // console.log("rcn data :"+rcnData);
-    readResponse();
-    $.get(url,{id:trackId, BU:BuName, type:searchType}).done(function (data) {
-            console.log("fetched invoice data 1st :"+data);
-            console.log(data);
-            $('#payload').html(JSON.stringify(data));
-            $('#jres').html(data);
-            fillSummaryTableData(); //check with removing later
-            summaryHead.text("Summary of "+searchDisplay+": "+trackId);
-            summaryHead.show();
-            $('#divOrderSummary').show();
-        })
-        .fail(function(data) {
-            $('#divOrderSummary').hide();
-            summaryHead.text("No data Found");
-            summaryHead.show();
-            $('#payload').html("");
-        });
+     console.log("rcn data :"+rcnData);
+    // readResponse();
+    var rcnData = fetchRcnData();
+    // console.log("after rcn");
+    console.log("rcn data :"+rcnData);
+
+    var pcnData = fetchPcnData();
+    // console.log("after rcn");
+    console.log("pcn data :"+pcnData);
+
+    var rdnData = fetchRdnData();
+    // console.log("after rcn");
+    console.log("rdn data :"+rdnData);
+    // $.get(url,{id:trackId, BU:BuName, type:searchType}).done(function (data) {
+    //         console.log("fetched invoice data 1st :"+data);
+    //         console.log(data);
+    //         $('#payload').html(JSON.stringify(data));
+    //         $('#jres').html(data);
+    //         fillSummaryTableData(); //check with removing later
+    //         summaryHead.text("Summary of "+searchDisplay+": "+trackId);
+    //         summaryHead.show();
+    //         $('#divOrderSummary').show();
+    //     })
+    //     .fail(function(data) {
+    //         $('#divOrderSummary').hide();
+    //         summaryHead.text("No data Found");
+    //         summaryHead.show();
+    //         $('#payload').html("");
+    //     });
 
 
 
 
 }
 
-/*function fetchRcnData() {
+function fetchRcnData() {
     $.get('/rcn',{id:trackId,type:searchType,BU:BuName}).done(function (data) {
         console.log("fetched rcn data");
         console.log(data);
@@ -98,7 +109,28 @@ function fetchPdnData() {
     }).fail(function(data) {
         console.log("failed while fetching PDN");
     });
-}*/
+}
+
+function fetchPcnData() {
+    $.get('/pcn',{id:trackId,type:searchType,BU:BuName}).done(function (data) {
+        console.log("fetched pcn data");
+        console.log(data);
+        return data;
+    }).fail(function(data) {
+        console.log("failed while fetching PCN");
+    });
+}
+
+function fetchRdnData() {
+    $.get('/rdn',{id:trackId,type:searchType,BU:BuName}).done(function (data) {
+        console.log("fetched rdn data");
+        console.log(data);
+        return data;
+    }).fail(function(data) {
+        console.log("failed while fetching rdn");
+    });
+}
+
 function fillSummaryTableData() {
     var summaryDetail = {};
     summaryDetail = responseData.summary_detail;

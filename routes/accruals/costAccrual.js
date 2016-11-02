@@ -2,21 +2,23 @@ var express = require('express');
 var router = express.Router();
 var clientHelper = require('../../lib/client-helper');
 var customAccJParser = require('./customAccrualJsonParser');
+var deferred = require('fk-common-utils').deferred;
 var header = {};
-var buId = "FKMP";
 var rawJson = null;
 
 router.get('/',function (req,res,next) {
     // direct way
-    console.log("in pdn");
-    var result = clientHelper.getHelper().execute('get',header,'cost_accrual',buId);
-    return result.pipe(function(token) {
-        //console.log("api first result sent below "+ JSON.stringify(result));
+    console.log("in cacc");
+    var paramHash = {};
+    paramHash[req.query.type] = req.query.id;
+    var result = clientHelper.getHelper().execute('get',header,'invoice_cacc',req.query.BU, paramHash);
+    return result.pipe(function(result) {
         rawJson = JSON.stringify(result);
-        console.log(customAccJParser.customAccJParser(rawJson));
-        res.send(token);
+        var cacc = {};
+        cacc["cost_accrual"] = customAccJParser.customAccJParser(rawJson);
+        console.log("final revenue output: "+ JSON.stringify(cacc));
+        deferred.success(res.send(cacc));
     });
 });
-
 
 module.exports = router;

@@ -33,6 +33,14 @@
     "merchant_ref_id": "external_ref_id",
     "order_id": "invoice_ref_2"
   },
+  "FKMP_invoice_pcn" : {
+    "merchant_ref_id": "external_ref_id",
+    "order_id": "invoice_ref_2"
+  },
+  "FKMP_invoice_rdn" : {
+    "merchant_ref_id": "external_ref_id",
+    "order_id": "invoice_ref_2"
+  },
   "EKL_shipping": {
     "vendor_tracking_id": "reporting_ref_2",
     "merchant_ref_id": "reporting_ref_3"
