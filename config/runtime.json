@@ -47,8 +47,8 @@
   },
   "table_definition" : {
     "FKMP": {
-      "invoice": ["Type","SubType","Amount","Created Date","Updated Date","Due Date","Settled Date","Payment/disbursement Id","isdatafix"],
-      "accrual": ["Type","Fee Name","Amount","Tax","Total amount","Created Date","Updated Date","Due Date","Settled Date","Payment/disbursement Id","isdatafix"]
+      "invoice": ["Type","SubType","Amount","Created Date","Updated Date","Due Date","status","Settled Date","Payment/disbursement Id","isdatafix"],
+      "accrual": ["Type","Fee Name","Amount","Tax","Total amount","Created Date","Updated Date","Due Date","status","Settled Date","Payment/disbursement Id","isdatafix"]
     }
   }
 }

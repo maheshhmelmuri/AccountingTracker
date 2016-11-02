@@ -12,7 +12,9 @@ var BuName;
 var trackId;
 var searchDisplay;
 var searchType;
-
+var tableLayout = "";
+var invoiceTable = "";
+responseData['invoice'] = {};
 
 var url = '/api';
 
@@ -47,65 +49,89 @@ function fetchData(trackingId)
     trackId=$('#inpTrackingId').val();
     searchType = $('#inpSearchType').val();
     searchDisplay = $('#inpSearchDisplay input').val();
-    var summaryHead = $('#divSummaryHead');
     // searchType = searchType.split('_').join(' ');
     BuName = $('#inpBuId').val();
     console.log(trackId);
-    var pdnData = fetchPdnData();
-    // console.log("after pdn");
-     console.log("pdn data :"+pdnData);
-    //readResponse(pdnData); // should add
-     var rcnData = fetchRcnData();
-    // console.log("after rcn");
-     console.log("rcn data :"+rcnData);
-    // readResponse();
-    var rcnData = fetchRcnData();
-    // console.log("after rcn");
-    console.log("rcn data :"+rcnData);
-
-    var pcnData = fetchPcnData();
-    // console.log("after rcn");
-    console.log("pcn data :"+pcnData);
-
-    var rdnData = fetchRdnData();
-    // console.log("after rcn");
-    console.log("rdn data :"+rdnData);
-    // $.get(url,{id:trackId, BU:BuName, type:searchType}).done(function (data) {
-    //         console.log("fetched invoice data 1st :"+data);
-    //         console.log(data);
-    //         $('#payload').html(JSON.stringify(data));
-    //         $('#jres').html(data);
-    //         fillSummaryTableData(); //check with removing later
-    //         summaryHead.text("Summary of "+searchDisplay+": "+trackId);
-    //         summaryHead.show();
-    //         $('#divOrderSummary').show();
-    //     })
-    //     .fail(function(data) {
-    //         $('#divOrderSummary').hide();
-    //         summaryHead.text("No data Found");
-    //         summaryHead.show();
-    //         $('#payload').html("");
-    //     });
-
-
-
-
-}
-
-function fetchRcnData() {
-    $.get('/rcn',{id:trackId,type:searchType,BU:BuName}).done(function (data) {
-        console.log("fetched rcn data");
-        console.log(data);
-        return data;
-    }).fail(function(data) {
-        console.log("failed while fetching PDN");
+    readResponse();
+    //fetch table header
+    $.get('/headerDef',{BU:BuName}).done(function(data) {
+       console.log("the table header is found");
+        // $.extend(responseData,data);
+        responseData['TableHeader'] = data;
+        console.log("final JSON :"+JSON.stringify(responseData));
+        Materialize.toast('Found Table Header!', 4000);
+        createInvoiceHeader();
+        //once table data found call the invoice api
+        fetchInvoiceDetails();
+        fetchPDN();
+    }).fail(function (data) {
+        console.log("failed while fetching header data");
     });
+    
+    
+    /*$.get(url,{id:trackId, BU:BuName, type:searchType}).done(function (data) {
+            console.log("fetched invoice data 1st :"+data);
+            console.log(data);
+            $('#payload').html(JSON.stringify(data));
+            $('#jres').html(data);
+            fillSummaryTableData(); //check with removing later
+            summaryHead.text("Summary of "+searchDisplay+": "+trackId);
+            summaryHead.show();
+            $('#divOrderSummary').show();
+        })
+        .fail(function(data) {
+            $('#divOrderSummary').hide();
+            summaryHead.text("No data Found");
+            summaryHead.show();
+            $('#payload').html("");
+        });*/
 }
-function fetchPdnData() {
+
+
+function fillSUmmaryTable() {
+    var summaryHead = $('#divSummaryHead');
+    /*$.get(url,{id:trackId, BU:BuName, type:searchType}).done(function (data) {
+            console.log("fetched invoice data 1st :"+data);
+            console.log(data);
+            $('#payload').html(JSON.stringify(data));
+            $('#jres').html(data);
+            fillSummaryTableData(); //should move this to other function
+            summaryHead.text("Summary of "+searchDisplay+": "+trackId);
+            summaryHead.show();
+            $('#divOrderSummary').show();
+            fillInvoiceDetails();
+        })
+        .fail(function(data) {
+            $('#divOrderSummary').hide();
+            summaryHead.text("No data Found");
+            summaryHead.show();
+            $('#payload').html("");
+        });*/
+
+    fetchInvoiceDetails();
+   
+}
+
+function fetchInvoiceDetails() {
+    console.log("calling RCN");
+    $.get('/rcn',{id:trackId,type:searchType,BU:BuName}).done(function (data) {
+        Materialize.toast('RCN Details found!', 4000);
+        responseData['invoice']['receivable_credit_note'] = data['receivable_credit_note'];
+        fillInvoiceRow(responseData['invoice']['receivable_credit_note']);
+        // closeTable();
+    }).fail(function(data) {
+        console.log("failed while fetching RCN");
+    });
+
+}
+
+function fetchPDN() {
+
     $.get('/pdn',{id:trackId,type:searchType,BU:BuName}).done(function (data) {
-        console.log("fetched pdn data");
-        console.log(data);
-        return data;
+        Materialize.toast('PDN Details found!', 4000);
+        responseData['invoice']['payable_debit_note'] = data['payable_debit_note'];
+        fillInvoiceRow(responseData['invoice']['payable_debit_note']);
+        closeTable();
     }).fail(function(data) {
         console.log("failed while fetching PDN");
     });
@@ -122,13 +148,44 @@ function fetchPcnData() {
 }
 
 function fetchRdnData() {
-    $.get('/rdn',{id:trackId,type:searchType,BU:BuName}).done(function (data) {
+    $.get('/rdn', {id: trackId, type: searchType, BU: BuName}).done(function (data) {
         console.log("fetched rdn data");
         console.log(data);
         return data;
-    }).fail(function(data) {
+    }).fail(function (data) {
         console.log("failed while fetching rdn");
     });
+}
+
+function closeTable() {
+    invoiceTable += '</table>';
+    $('#divInvoiceTable').append(invoiceTable);
+    $('#divInvoiceHead').show();
+    $('#divInvoiceData').show();
+    console.log("invoce table:"+invoiceTable);
+}
+
+
+function fillInvoiceRow(res) {
+    $.each(res, function(rows) {
+       invoiceTable += '<tr>';
+       $.each(res[rows],function(rowHead,rowVal) {
+           invoiceTable += '<td>'+rowVal+'</td>';
+       }) ;
+       invoiceTable += '</tr>';
+    });
+}
+
+function createInvoiceHeader() {
+    invoiceTable = '<table class="highlight"><thead><tr>';
+    var header = responseData['TableHeader']['invoice'];
+    $.each(header,function (index) {
+        invoiceTable += '<th>'+header[index]+'</th>';
+    });
+    invoiceTable += '</tr></thead>';
+
+    invoiceTable += '<tboby><tr>';
+    // $.each(responseData[])
 }
 
 function fillSummaryTableData() {
