@@ -15,7 +15,9 @@ var clientHelper = require('./../lib/client-helper');
 
 router.get('/',function (req,res,next) {
     // direct way
-    var headerDef = config.table_definition.req.query.BU;
+    console.log("in table header controller");
+    var headerDef = eval('config.table_definition.'+req.query.BU);
+    console.log("the header def in controller :"+JSON.stringify(headerDef));
     res.send(headerDef);
 });
 
