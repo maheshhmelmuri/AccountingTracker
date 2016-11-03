@@ -3,7 +3,8 @@
     "shipping": "http://10.85.50.117/shipments/get_all_shipment_details?",
     "invoice": "http://10.85.50.152:80/v1/invoice/type",
     "accrual": "http://10.85.51.31/accrual/revenue_accrual",
-    "businessUnit": "http://10.85.52.146:80/business_unit"
+    "businessUnit": "http://10.85.52.146:80/business_unit",
+    "oms": "http://10.47.2.215/order_items"
   },
   "FKMP_url" : {
 
@@ -16,7 +17,8 @@
     "accrual": "http://10.85.51.31/accrual",
     "revenue_accrual": "http://10.85.51.31/accrual/revenue_accrual",
     "cost_accrual": "http://10.85.51.31/accrual/cost_accrual",
-    "businessUnit": "http://10.85.52.146:80/business_unit"
+    "businessUnit": "http://10.85.52.146:80/business_unit",
+    "oms": "http://10.47.2.215/order_items"
   },
   "invoice" : {
     "type": ["payable_credit_note"]
@@ -40,6 +42,12 @@
   "FKMP_invoice_rdn" : {
     "merchant_ref_id": "external_ref_id",
     "order_id": "invoice_ref_2"
+  },
+  "FKMP_revenue_accrual" : {
+    "merchant_ref_id": "external_ref_id"
+  },
+  "FKMP_cost_accrual" : {
+    "merchant_ref_id": "external_ref_id"
   },
   "EKL_shipping": {
     "vendor_tracking_id": "reporting_ref_2",

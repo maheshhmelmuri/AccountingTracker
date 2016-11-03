@@ -15,7 +15,7 @@ router.get('/',function (req,res,next) {
     return result.pipe(function(result) {
         rawJson = JSON.stringify(result);
         var rdn = {};
-        rdn["receivable_debit_note"] = customInvJParser.customInvJParser(rawJson);
+        rdn = customInvJParser.customInvJParser(rawJson);
         console.log("final rdn output: "+ JSON.stringify(rdn));
         deferred.success(res.send(rdn));
     });

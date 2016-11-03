@@ -7,32 +7,36 @@ module.exports =
     customAccJParser: function customAccrualJsonParser(rawJson) {
         var jsonReader = JSON.parse(rawJson);
         var jsonOutput = {};
-        var jsonData = [];
-        console.log(jsonReader.accruals.length);
-        console.log(jsonReader.accruals[0].accrual_items[0].accrual_type);
-        for (var i = 0; i < jsonReader.accruals.length; i++) {
-            jsonOutput = {};
-            jsonData[i] = {};
-            jsonOutput["Type"] = jsonReader.accruals[0].accrual_items[0].accrual_type;
-            jsonOutput["Fee name"] = "Commission";
-            jsonOutput["Amount"] = "null";
-            jsonOutput["Tax"] = jsonReader.accruals[i].accrual_items[i].tax_rate;
-            jsonOutput["Total Amount"] = jsonReader.accruals[i].accrual_items[i].total_amount;
-            jsonOutput["Created date"] = dateFormatter(jsonReader.accruals[0].created_at);
-            jsonOutput["Updated date"] = dateFormatter(jsonReader.accruals[0].updated_at);
-            jsonOutput["Due date"] = dateFormatter(jsonReader.accruals[0].due_date);
-            jsonOutput["Setteled Date"] = "null";
-            jsonOutput["Status"] = jsonReader.accruals[0].status;
-            jsonOutput["Payment/disbursement id"] = "null";
-            jsonOutput["is Datafix"] = "Manual";
-            jsonData[i] = jsonOutput;
+        var jsonOrderItem = {};
+        if(jsonReader.accruals != null || jsonReader.accruals != undefined ) {
+            for (var i = 0; i < jsonReader.accruals.length; i++) {
+                jsonOutput = {};
+                if(jsonOrderItem[jsonReader.accruals[i].accrual_ref_3] == undefined)
+                {
+                    jsonOrderItem[jsonReader.accruals[i].accrual_ref_3] = [];
+                }
+                jsonOutput["Type"] = jsonReader.accruals[i].accrual_items[0].accrual_type;
+                jsonOutput["Fee name"] = "Commission";
+                jsonOutput["Amount"] = "null";
+                jsonOutput["Tax"] = jsonReader.accruals[i].accrual_items[0].tax_rate;
+                jsonOutput["Total Amount"] = jsonReader.accruals[i].accrual_items[0].total_amount;
+                jsonOutput["Created date"] = dateFormatter(jsonReader.accruals[i].created_at);
+                jsonOutput["Updated date"] = dateFormatter(jsonReader.accruals[i].updated_at);
+                jsonOutput["Due date"] = "null";
+                jsonOutput["Setteled Date"] = "null";
+                jsonOutput["Status"] = jsonReader.accruals[0].status;
+                jsonOutput["Payment/disbursement id"] = "null";
+                jsonOutput["is Datafix"] = "Manual";
+                jsonOrderItem[jsonReader.accruals[i].accrual_ref_3].push(jsonOutput);
 
+            }
         }
-        return JSON.stringify(jsonData);
+        console.log("Accrual JSON data:"+JSON.stringify(jsonOrderItem));
+        return jsonOrderItem;
 
-    },
+    }
 
-}
+};
 function dateFormatter(inputDate) {
     return inputDate.toString().substring(0, 10) + " " + inputDate.toString().substring(11, 19).toString();
 }

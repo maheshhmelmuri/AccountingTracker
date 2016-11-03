@@ -15,7 +15,7 @@ router.get('/',function (req,res,next) {
     return result.pipe(function(result) {
         rawJson = JSON.stringify(result);
         var pcn = {};
-        pcn["payable_credit_note"] = customInvJParser.customInvJParser(rawJson);
+        pcn = customInvJParser.customInvJParser(rawJson);
         console.log("final pcn output: "+ JSON.stringify(pcn));
         deferred.success(res.send(pcn));
     });

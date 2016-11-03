@@ -11,12 +11,12 @@ router.get('/',function (req,res,next) {
     console.log("in cacc");
     var paramHash = {};
     paramHash[req.query.type] = req.query.id;
-    var result = clientHelper.getHelper().execute('get',header,'invoice_cacc',req.query.BU, paramHash);
+    var result = clientHelper.getHelper().execute('get',header,'cost_accrual',req.query.BU, paramHash);
     return result.pipe(function(result) {
         rawJson = JSON.stringify(result);
         var cacc = {};
-        cacc["cost_accrual"] = customAccJParser.customAccJParser(rawJson);
-        console.log("final revenue output: "+ JSON.stringify(cacc));
+        cacc = customAccJParser.customAccJParser(rawJson);
+        console.log("final cost output: "+ JSON.stringify(cacc));
         deferred.success(res.send(cacc));
     });
 });
