@@ -20,6 +20,8 @@ var shipmentIds = [];
 var syncInvoiceCount = 0;
 var syncAccrualCount = 0;
 
+var ignoreDisplayTable = ["shipment_id"];
+
 var buOptionMapping = '{"FKMP":\
                                 {\
                                 "order_id":"Order Id",\
@@ -51,6 +53,7 @@ function fetchData(trackingId)
     trackId=$('#inpTrackingId').val();
     searchType = $('#inpSearchType').val();
     searchDisplay = $('#inpSearchDisplay input').val();
+    responseData = {};
     // searchType = searchType.split('_').join(' ');
     BuName = $('#inpBuId').val();
     console.log(trackId);
@@ -91,7 +94,7 @@ function fetchData(trackingId)
 
 function getSummaryLine(ItemId, shipmentId) {
     return '<div>\
-    <div class="sub-heading">Item ID :'+ItemId+' Shipment ID'+shipmentId+'</div>\
+    <div class="sub-heading">Item ID :'+ItemId+' Shipment ID : '+shipmentId+'</div>\
     </div>';
 }
 
@@ -113,7 +116,11 @@ function getInvoiceTable(invoiceArray) {
     $.each(invoiceArray, function(index) {
         invoiceTable += '</tr>';
        $.each(invoiceArray[index], function(key,value) {
-           invoiceTable += '<td>'+value+'</td>';
+           console.log("ignoretable ius type of :"+typeof ignoreDisplayTable);
+           if ( $.inArray(ignoreDisplayTable,key) < 0 ) {
+               console.log("the key to use: "+key+ " the value of in array is: "+$.inArray(ignoreDisplayTable,key));
+               invoiceTable += '<td>'+value+'</td>';
+           }
        }); 
     });
 
@@ -122,6 +129,11 @@ function getInvoiceTable(invoiceArray) {
 }
 function generateTable()  {
     console.log("shipment: "+JSON.stringify(shipmentIds));
+    fillSUmmaryTable();
+    var finalTable = '';
+    finalTable = '<div class="top-heading" style="margin-bottom: 12px">Accounting details below</div>\
+';
+    $('#divTableData').append(finalTable);
     $.each(responseData, function(key, data) {
        if( key != "summary_detail" && key != "TableHeader") {
            console.log("key is: "+ key);
@@ -129,7 +141,7 @@ function generateTable()  {
            var summLine = getSummaryLine(key,data['invoice'][0]['shipment_id']);
            var invoice_table = getInvoiceTable(data['invoice']);
            // var accrual_table = getAccrualTable(data['accrual']);
-           var finalTable = summLine+invoice_table;
+           finalTable = summLine+invoice_table;
            console.log(finalTable);
            $('#divTableData').append(finalTable);
        }
@@ -158,24 +170,10 @@ function generateTable()  {
 
 function fillSUmmaryTable() {
     var summaryHead = $('#divSummaryHead');
-    /*$.get(url,{id:trackId, BU:BuName, type:searchType}).done(function (data) {
-            console.log("fetched invoice data 1st :"+data);
-            console.log(data);
-            $('#payload').html(JSON.stringify(data));
-            $('#jres').html(data);
-            fillSummaryTableData(); //should move this to other function
-            summaryHead.text("Summary of "+searchDisplay+": "+trackId);
-            summaryHead.show();
-            $('#divOrderSummary').show();
-            fillInvoiceDetails();
-        })
-        .fail(function(data) {
-            $('#divOrderSummary').hide();
-            summaryHead.text("No data Found");
-            summaryHead.show();
-            $('#payload').html("");
-        });*/
-   
+    summaryHead.text("Summary of "+searchDisplay+": "+trackId);
+    summaryHead.show();
+    fillSummaryTableData(); //should move this to other function
+    $('#divOrderSummary').show();
 }
 
 function fetchInvoiceDetails() {
@@ -186,8 +184,6 @@ function fetchInvoiceDetails() {
     fetchPcnData();
 
     fetchRdnData();
-
-    // callback();
 
 }
 
@@ -369,18 +365,18 @@ function fetchAccrualData() {
     $.each(shipmentIds,function(index) {
        //do the accrual calls
         fetchRevenueAccrual(shipmentIds[index],"merchant_ref_id");
-        // fetchCostAccrual(shipmentIds[index],"merchant_ref_id");
+        fetchCostAccrual(shipmentIds[index],"merchant_ref_id");
     });
 }
 
 
-function closeTable() {
+/*function closeTable() {
     invoiceTable += '</table>';
     $('#divInvoiceTable').append(invoiceTable);
     $('#divInvoiceHead').show();
     $('#divInvoiceData').show();
-    console.log("invoce table:"+invoiceTable);
-}
+    console.log("invoice table:"+invoiceTable);
+}*/
 
 
 function fillInvoiceRow(res) {
@@ -408,7 +404,7 @@ function createInvoiceHeader() {
 
 function fillSummaryTableData() {
     var summaryDetail = {};
-    summaryDetail = responseData.summary_detail;
+    summaryDetail = responseData['summary_detail'];
     var summTable = $('#summaryTable');
     $.each(summaryDetail,function (rowKey,rowValue) {
         $('#'+rowKey).html(rowValue);
