@@ -20,7 +20,7 @@ var shipmentIds = [];
 var syncInvoiceCount = 0;
 var syncAccrualCount = 0;
 
-var ignoreDisplayTable = ["shipment_id"];
+var ignoreDisplayTable = ['shipment_id'];
 
 var buOptionMapping = '{"FKMP":\
                                 {\
@@ -116,8 +116,8 @@ function getInvoiceTable(invoiceArray) {
     $.each(invoiceArray, function(index) {
         invoiceTable += '</tr>';
        $.each(invoiceArray[index], function(key,value) {
-           console.log("ignoretable ius type of :"+typeof ignoreDisplayTable);
-           if ( $.inArray(ignoreDisplayTable,key) < 0 ) {
+           console.log("ignoretable ius type of :"+ JSON.stringify(ignoreDisplayTable));
+           if ( $.inArray(key,ignoreDisplayTable) < 0 ) {
                console.log("the key to use: "+key+ " the value of in array is: "+$.inArray(ignoreDisplayTable,key));
                invoiceTable += '<td>'+value+'</td>';
            }
