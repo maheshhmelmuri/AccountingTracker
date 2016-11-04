@@ -20,7 +20,7 @@ var shipmentIds = [];
 var syncInvoiceCount = 0;
 var syncAccrualCount = 0;
 
-var ignoreDisplayTable = ["shipment_id"];
+var ignoreDisplayTable = ['shipment_id'];
 
 var buOptionMapping = '{"FKMP":\
                                 {\
@@ -73,23 +73,7 @@ function fetchData(trackingId)
         console.log("failed while fetching header data");
     });
     
-    
-    /*$.get(url,{id:trackId, BU:BuName, type:searchType}).done(function (data) {
-            console.log("fetched invoice data 1st :"+data);
-            console.log(data);
-            $('#payload').html(JSON.stringify(data));
-            $('#jres').html(data);
-            fillSummaryTableData(); //check with removing later
-            summaryHead.text("Summary of "+searchDisplay+": "+trackId);
-            summaryHead.show();
-            $('#divOrderSummary').show();
-        })
-        .fail(function(data) {
-            $('#divOrderSummary').hide();
-            summaryHead.text("No data Found");
-            summaryHead.show();
-            $('#payload').html("");
-        });*/
+
 }
 
 function getSummaryLine(ItemId, shipmentId) {
@@ -119,8 +103,12 @@ function getInvoiceTable(invoiceArray) {
 
     $.each(invoiceArray, function(index) {
         invoiceTable += '</tr>';
-        $.each(invoiceArray[index], function(key,value) {
-           invoiceTable += '<td>'+value+'</td>';
+       $.each(invoiceArray[index], function(key,value) {
+           console.log("ignoretable ius type of :"+ JSON.stringify(ignoreDisplayTable));
+           if ( $.inArray(key,ignoreDisplayTable) < 0 ) {
+               console.log("the key to use: "+key+ " the value of in array is: "+$.inArray(ignoreDisplayTable,key));
+               invoiceTable += '<td>'+value+'</td>';
+           }
        }); 
     });
 
