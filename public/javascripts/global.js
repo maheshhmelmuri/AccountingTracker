@@ -20,7 +20,7 @@ var shipmentIds = [];
 var syncInvoiceCount = 0;
 var syncAccrualCount = 0;
 
-var ignoreDisplayTable = ['shipment_id'];
+var ignoreDisplayTable = ['shipment_id','extra_details'];
 
 var buOptionMapping = '{"FKMP":\
                                 {\
@@ -84,7 +84,7 @@ function getSummaryLine(ItemId, shipmentId) {
 }
 
 function getInvoiceTable(invoiceArray) {
-    var invoiceTable = '<div id="divOrderSummary" style="padding-top:1%;padding-left:1%;" class="row">\
+    var invoiceTable = '<div id="divInvoiceTable" style="padding-top:1%;" class="row">\
         <div class="col s12">\
         <table id="invoiceTable"> \
         <thead>\
@@ -118,7 +118,7 @@ function getInvoiceTable(invoiceArray) {
 }
 
 function getAccrualTable(accrualArray) {
-    var accrualTable = '<div id="divOrderSummary" style="padding-top:1%;padding-left:1%;" class="row">\
+    var accrualTable = '<div id="divAccrualTable" style="padding-top:1%;" class="row">\
     <div class="col s12">\
     <table id="accrualTable">\
     <thead>\
@@ -136,7 +136,9 @@ function getAccrualTable(accrualArray) {
     $.each(accrualArray, function(index) {
         accrualTable += '</tr>';
         $.each(accrualArray[index], function(key,value) {
-            accrualTable += '<td>'+value+'</td>';
+            if ( $.inArray(key,ignoreDisplayTable) < 0 ) {
+                accrualTable += '<td>' + value + '</td>';
+            }
         });
     });
 
@@ -163,25 +165,37 @@ function generateTable()  {
         if(itemID != "summary_detail" && itemID != "TableHeader") {
             var finalTable = "";
             var summLine = "";
+            var accordion = "";
+            var finalAccordion = '<ul class="collapsible" data-collapsible="accordion">';;
             var eventLevelTable = "";
             // var summLine = getSummaryLine(key,itemHash['invoice'][0]['shipment_id']);
             $.each(itemHash, function(eventName, data) {
                 console.log("DEBUG - eventData: "+JSON.stringify(data));
+                //accordion creation
+                accordion = "";
+                accordion += '<li>\
+                <div class="collapsible-header sub-sub-heading" style="color: white"> Event : '+eventName+'</div>';
+
                 var eventLine = getEventLine(eventName);
                 summLine = getSummaryLine(itemID,data['invoice'][0]['shipment_id']);
                 var invoice_table = getInvoiceTable(data['invoice']);
                 var accrual_table = getAccrualTable(data['accrual']);
-                eventLevelTable += eventLine+invoice_table+accrual_table;
-                console.log(eventLevelTable);
+                // eventLevelTable += eventLine+invoice_table+accrual_table;
+                accordion += '<div class="collapsible-body">'+invoice_table+accrual_table+'</div>\
+                    </li>';
+
+                finalAccordion += accordion;
+                console.log(accordion);
+                $('.collapsible').collapsible();
             });
-            finalTable = summLine + eventLevelTable;
+            finalAccordion += '</ul>';
+            finalTable += summLine + finalAccordion;
             $('#divTableData').append(finalTable);
         }
     });
 
-
+    $('.collapsible').collapsible();
     console.log("responseData: "+ JSON.stringify(responseData));
-
 }
 
 function fillSUmmaryTable() {
@@ -445,6 +459,7 @@ function readResponse(response) {
 
 $(document).ready(function() {
     $('select').material_select();
+    $('.collapsible').collapsible();
 });
 
 

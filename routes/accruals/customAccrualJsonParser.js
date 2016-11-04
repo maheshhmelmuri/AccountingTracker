@@ -8,9 +8,11 @@ module.exports =
         var jsonReader = JSON.parse(rawJson);
         var jsonOutput = {};
         var jsonDataOrderItemEvent = {};
+        var extraDetails = {};
         if(jsonReader.accruals != null || jsonReader.accruals != undefined ) {
             for (var i = 0; i < jsonReader.accruals.length; i++) {
                 jsonOutput = {};
+                extraDetails = {};
                 var event = jsonReader.accruals[i].comments.toString().split(":")[1].trim();
                 if(jsonDataOrderItemEvent[jsonReader.accruals[i].accrual_ref_3] == undefined)
                 {
@@ -22,10 +24,10 @@ module.exports =
                 }
 
                 jsonOutput["Type"] = jsonReader.accruals[i].accrual_items[0].accrual_type;
-                jsonOutput["Fee name"] = "Commission";
-                jsonOutput["Amount"] = "null";
-                jsonOutput["Tax"] = jsonReader.accruals[i].accrual_items[0].tax_rate;
-                jsonOutput["Total Amount"] = jsonReader.accruals[i].accrual_items[0].total_amount;
+                jsonOutput["Fee name"] = jsonReader.accruals[i].accrual_ref_5;
+                jsonOutput["Amount"] = jsonReader.accruals[i].accrual_items[0].total_amount;
+                jsonOutput["Tax"] = jsonReader.accruals[i].accrual_items[0].sub_items[0].total_amount;
+                jsonOutput["Total Amount"] = jsonReader.accruals[i].total_amount;
                 jsonOutput["Created date"] = dateFormatter(jsonReader.accruals[i].created_at);
                 jsonOutput["Updated date"] = dateFormatter(jsonReader.accruals[i].updated_at);
                 jsonOutput["Due date"] = "null";
@@ -33,8 +35,17 @@ module.exports =
                 jsonOutput["Status"] = jsonReader.accruals[i].status;
                 jsonOutput["Payment/disbursement id"] = "null";
                 jsonOutput["is Datafix"] = "Manual";
+                //extra details
+                extraDetails["Total Payable"] = "null";
+                extraDetails["GMV"] = "null";
+                extraDetails["Fee Exp"] = "null";
+                extraDetails["AGM ID"] = "null";
+                extraDetails["Vertical"] = "null";
+                extraDetails["Brand"] = "null";
+                extraDetails["Invoice Type"] = "null";
+                extraDetails["FSN"] = "null";
+                jsonOutput["extra_details"] = extraDetails;
                 jsonDataOrderItemEvent[jsonReader.accruals[i].accrual_ref_3][event].push(jsonOutput);
-                //jsonOrderItem[jsonReader.accruals[i].accrual_ref_3].push(jsonOutput);
 
             }
         }
