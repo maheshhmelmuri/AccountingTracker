@@ -5,15 +5,24 @@ module.exports =
 {
     customInvJParser: function customInvoiceJsonParser(rawJson) {
         var jsonReader = JSON.parse(rawJson);
+        //console.log("rawjson"+rawJson);
         var jsonOutput = {};
-        var jsonDataOrderItem = {};
+        var jsonDataOrderItemEvent = {};
         if( jsonReader.invoices != null || jsonReader.invoices != undefined ) {
             for (var i = 0; i < jsonReader.invoices.length; i++) {
                 jsonOutput = {};
-                if(jsonDataOrderItem[jsonReader.invoices[i].invoice_ref_3]  == undefined)
+
+                if(jsonDataOrderItemEvent[jsonReader.invoices[i].invoice_ref_3]  == undefined)
                 {
-                    jsonDataOrderItem[jsonReader.invoices[i].invoice_ref_3] = [];
+                    jsonDataOrderItemEvent[jsonReader.invoices[i].invoice_ref_3] = {};
+
                 }
+                if(jsonDataOrderItemEvent[jsonReader.invoices[i].invoice_ref_3][jsonReader.invoices[i].comments]  == undefined)
+                {
+                    jsonDataOrderItemEvent[jsonReader.invoices[i].invoice_ref_3][jsonReader.invoices[i].comments] = [];
+
+                }
+
                 jsonOutput["Type"] = jsonReader.invoices[i].type;
                 jsonOutput["SubType"] = "Sale";
                 jsonOutput["Amount"] = jsonReader.invoices[i].total_amount;
@@ -25,10 +34,10 @@ module.exports =
                 jsonOutput["Payment/disbursement id"] = "null";
                 jsonOutput["is Datafix"] = "Manual";
                 jsonOutput["shipment_id"] = jsonReader.invoices[i].external_ref_id;
-                jsonDataOrderItem[jsonReader.invoices[i].invoice_ref_3].push(jsonOutput);
+                jsonDataOrderItemEvent[jsonReader.invoices[i].invoice_ref_3][jsonReader.invoices[i].comments].push(jsonOutput);
             }
         }
-        console.log("jsonData:"+JSON.stringify(jsonDataOrderItem));
+        console.log("jsonDataUpdated1:"+JSON.stringify(jsonDataOrderItemEvent));
         return jsonDataOrderItem;
 
     }

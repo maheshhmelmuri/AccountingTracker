@@ -24,7 +24,7 @@ module.exports =
                 jsonOutput["Updated date"] = dateFormatter(jsonReader.accruals[i].updated_at);
                 jsonOutput["Due date"] = "null";
                 jsonOutput["Setteled Date"] = "null";
-                jsonOutput["Status"] = jsonReader.accruals[0].status;
+                jsonOutput["Status"] = jsonReader.accruals[i].status;
                 jsonOutput["Payment/disbursement id"] = "null";
                 jsonOutput["is Datafix"] = "Manual";
                 jsonOrderItem[jsonReader.accruals[i].accrual_ref_3].push(jsonOutput);

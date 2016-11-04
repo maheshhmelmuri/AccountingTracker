@@ -94,7 +94,7 @@ function fetchData(trackingId)
 
 function getSummaryLine(ItemId, shipmentId) {
     return '<div>\
-    <div class="sub-heading">Item ID :'+ItemId+' Shipment ID : '+shipmentId+'</div>\
+    <div class="sub-heading">Item ID :'+ItemId+' Shipment ID :'+shipmentId+'</div>\
     </div>';
 }
 
@@ -103,7 +103,10 @@ function getInvoiceTable(invoiceArray) {
         <div class="col s12">\
         <table id="invoiceTable"> \
         <thead>\
-        <tr>';
+        <tr>\
+        <b>Invoices</b>';
+
+
     var invoiceHead = responseData['TableHeader']['invoice'];
     
     $.each(invoiceHead, function(index) {
@@ -112,21 +115,47 @@ function getInvoiceTable(invoiceArray) {
     
     invoiceTable += '</tr>\
     <tbody>';
-    
+
+
     $.each(invoiceArray, function(index) {
         invoiceTable += '</tr>';
-       $.each(invoiceArray[index], function(key,value) {
-           console.log("ignoretable ius type of :"+typeof ignoreDisplayTable);
-           if ( $.inArray(ignoreDisplayTable,key) < 0 ) {
-               console.log("the key to use: "+key+ " the value of in array is: "+$.inArray(ignoreDisplayTable,key));
-               invoiceTable += '<td>'+value+'</td>';
-           }
+        $.each(invoiceArray[index], function(key,value) {
+           invoiceTable += '<td>'+value+'</td>';
        }); 
     });
 
     invoiceTable += '</tbody></table>';
     return invoiceTable;
 }
+
+function getAccrualTable(accrualArray) {
+    var accrualTable = '<div id="divOrderSummary" style="padding-top:1%;padding-left:1%;" class="row">\
+    <div class="col s12">\
+    <table id="accrualTable">\
+    <thead>\
+    <tr>\
+    <b>Accruals</b>';
+
+    var accrualHead = responseData['TableHeader']['accrual'];
+    $.each(accrualHead,function (index) {
+        accrualTable +='<th>'+accrualHead[index]+'</th>';
+    });
+
+    accrualTable +='</tr>\
+    <tbody>';
+
+    $.each(accrualArray, function(index) {
+        accrualTable += '</tr>';
+        $.each(accrualArray[index], function(key,value) {
+            accrualTable += '<td>'+value+'</td>';
+        });
+    });
+
+    accrualTable += '</tbody></table>';
+    return accrualTable;
+
+}
+
 function generateTable()  {
     console.log("shipment: "+JSON.stringify(shipmentIds));
     fillSUmmaryTable();
@@ -140,8 +169,8 @@ function generateTable()  {
            console.log("the data in it is: "+JSON.stringify(data));
            var summLine = getSummaryLine(key,data['invoice'][0]['shipment_id']);
            var invoice_table = getInvoiceTable(data['invoice']);
-           // var accrual_table = getAccrualTable(data['accrual']);
-           finalTable = summLine+invoice_table;
+           var accrual_table = getAccrualTable(data['accrual']);
+           var finalTable = summLine+invoice_table+accrual_table;
            console.log(finalTable);
            $('#divTableData').append(finalTable);
        }
@@ -253,6 +282,7 @@ function updateResultData(itemId, dataArray) {
           if ( responseData[itemId]["invoice"] == undefined ) {
               responseData[itemId]["invoice"] = [];
               responseData[itemId]["invoice"].push(dataArray[index]);
+              console.log("res:"+responseData);
           } else {
               responseData[itemId]["invoice"].push(dataArray[index]);
           }
