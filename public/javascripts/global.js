@@ -84,7 +84,7 @@ function getSummaryLine(ItemId, shipmentId) {
 }
 
 function getInvoiceTable(invoiceArray) {
-    var invoiceTable = '<div id="divInvoiceTable" style="padding-top:1%;" class="row">\
+    var invoiceTable = '<div id="divInvoiceTable" style="padding-top:1%;padding-left: 1%;padding-right: 1%" class="row">\
         <div class="col s12">\
         <table id="invoiceTable"> \
         <thead>\
@@ -113,12 +113,12 @@ function getInvoiceTable(invoiceArray) {
        }); 
     });
 
-    invoiceTable += '</tbody></table>';
+    invoiceTable += '</tbody></table></div></div>';
     return invoiceTable;
 }
 
 function getAccrualTable(accrualArray) {
-    var accrualTable = '<div id="divAccrualTable" style="padding-top:1%;" class="row">\
+    var accrualTable = '<div id="divAccrualTable" style="padding-top:1%;padding-left: 1%;padding-right: 1%" class="row">\
     <div class="col s12">\
     <table id="accrualTable">\
     <thead>\
@@ -142,7 +142,7 @@ function getAccrualTable(accrualArray) {
         });
     });
 
-    accrualTable += '</tbody></table>';
+    accrualTable += '</tbody></table></div></div>';
     return accrualTable;
 
 }

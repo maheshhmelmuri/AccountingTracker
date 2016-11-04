@@ -85,3 +85,7 @@ table, th, td {
   border: 1px solid black !important;
   text-align: center !important;
 }
+
+#divTableData {
+  margin-bottom: 4%;
+}
