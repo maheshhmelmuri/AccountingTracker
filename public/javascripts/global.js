@@ -54,6 +54,7 @@ function fetchData(trackingId)
     searchType = $('#inpSearchType').val();
     searchDisplay = $('#inpSearchDisplay input').val();
     responseData = {};
+    console.log("the response data now is :"+responseData.length);
     // searchType = searchType.split('_').join(' ');
     BuName = $('#inpBuId').val();
     console.log(trackId);
@@ -144,44 +145,42 @@ function getAccrualTable(accrualArray) {
 
 }
 
+function getEventLine(eventName) {
+    return '<div>\
+    <div class="sub-sub-heading">Event :'+eventName+'</div>\
+    </div>';
+}
+
 function generateTable()  {
     console.log("shipment: "+JSON.stringify(shipmentIds));
+    console.log("the final data is : "+ JSON.stringify(responseData));
     fillSUmmaryTable();
     var finalTable = '';
     finalTable = '<div class="top-heading" style="margin-bottom: 12px">Accounting details below</div>\
 ';
     $('#divTableData').append(finalTable);
-    $.each(responseData, function(key, data) {
-       if( key != "summary_detail" && key != "TableHeader") {
-           console.log("key is: "+ key);
-           console.log("the data in it is: "+JSON.stringify(data));
-           var summLine = getSummaryLine(key,data['invoice'][0]['shipment_id']);
-           var invoice_table = getInvoiceTable(data['invoice']);
-           var accrual_table = getAccrualTable(data['accrual']);
-           var finalTable = summLine+invoice_table+accrual_table;
-           console.log(finalTable);
-           $('#divTableData').append(finalTable);
-       }
+    $.each(responseData, function(itemID,itemHash) {
+        if(itemID != "summary_detail" && itemID != "TableHeader") {
+            var finalTable = "";
+            var summLine = "";
+            var eventLevelTable = "";
+            // var summLine = getSummaryLine(key,itemHash['invoice'][0]['shipment_id']);
+            $.each(itemHash, function(eventName, data) {
+                console.log("DEBUG - eventData: "+JSON.stringify(data));
+                var eventLine = getEventLine(eventName);
+                summLine = getSummaryLine(itemID,data['invoice'][0]['shipment_id']);
+                var invoice_table = getInvoiceTable(data['invoice']);
+                var accrual_table = getAccrualTable(data['accrual']);
+                eventLevelTable += eventLine+invoice_table+accrual_table;
+                console.log(eventLevelTable);
+            });
+            finalTable = summLine + eventLevelTable;
+            $('#divTableData').append(finalTable);
+        }
     });
 
+
     console.log("responseData: "+ JSON.stringify(responseData));
-    // if(responseData['invoice']['receivable_credit_note'] != null || responseData['invoice']['receivable_credit_note'] != undefined) {
-    //     fillInvoiceRow(responseData['invoice']['receivable_credit_note']);
-    // }
-    //
-    // if(responseData['invoice']['payable_debit_note'] != null || responseData['invoice']['payable_debit_note'] != undefined) {
-    //     fillInvoiceRow(responseData['invoice']['payable_debit_note']);
-    // }
-    //
-    // if(responseData['invoice']['receivable_debit_note'] != null || responseData['invoice']['receivable_debit_note'] != undefined) {
-    //     fillInvoiceRow(responseData['invoice']['receivable_debit_note']);
-    // }
-    //
-    // if(responseData['invoice']['payable_credit_note'] != null || responseData['invoice']['payable_credit_note'] != undefined) {
-    //     fillInvoiceRow(responseData['invoice']['payable_credit_note']);
-    // }
-    //
-    //     closeTable();
 
 }
 
@@ -258,31 +257,37 @@ function fetchCostAccrual(searchId, searchType) {
     });
 }
 
-function updateResultData(itemId, dataArray) {
+function updateResultData(itemId, eventData) {
     if ( responseData[itemId] == undefined ) {
         responseData[itemId] = {};
     }
-    $.each(dataArray, function(index) {
-       if ( dataArray[index]["Type"] == "payable_debit_note" || dataArray[index]["Type"] == "receivable_credit_note" || dataArray[index]["Type"] == "receivable_debit_note" || dataArray[index]["Type"] == "payable_credit_note" ) {
-          if ( $.inArray(dataArray[index]["shipment_id"],shipmentIds ) < 0 ) {
-               shipmentIds.push(dataArray[index]["shipment_id"]); //these Id's will be used to fetch Accruals
-          }
-          if ( responseData[itemId]["invoice"] == undefined ) {
-              responseData[itemId]["invoice"] = [];
-              responseData[itemId]["invoice"].push(dataArray[index]);
-              console.log("res:"+responseData);
-          } else {
-              responseData[itemId]["invoice"].push(dataArray[index]);
-          }
-       } else if ( dataArray[index]["Type"] == "revenue_accrual" || dataArray[index]["Type"] == "cost_accrual") {
-           if ( responseData[itemId]["accrual"] == undefined ) {
-               responseData[itemId]["accrual"] = [];
-               responseData[itemId]["accrual"].push(dataArray[index]);
-           } else {
-               responseData[itemId]["accrual"].push(dataArray[index]);
-           }
-       }
+    $.each(eventData,function(eventName, eventArray) {
+        if( responseData[itemId][eventName] == undefined ) {
+            responseData[itemId][eventName] = {};
+        }
+        $.each( eventArray, function(index) {
+            if ( eventArray[index]["Type"] == "payable_debit_note" || eventArray[index]["Type"] == "receivable_credit_note" || eventArray[index]["Type"] == "receivable_debit_note" || eventArray[index]["Type"] == "payable_credit_note" ) {
+                if ( $.inArray(eventArray[index]["shipment_id"],shipmentIds ) < 0 ) {
+                    shipmentIds.push(eventArray[index]["shipment_id"]); //these Id's will be used to fetch Accruals
+                }
+                if ( responseData[itemId][eventName]["invoice"] == undefined ) {
+                    responseData[itemId][eventName]["invoice"] = [];
+                    responseData[itemId][eventName]["invoice"].push(eventArray[index]);
+                    console.log("res:"+responseData);
+                } else {
+                    responseData[itemId][eventName]["invoice"].push(eventArray[index]);
+                }
+            } else if ( eventArray[index]["Type"] == "revenue_accrual" || eventArray[index]["Type"] == "cost_accrual") {
+                if ( responseData[itemId][eventName]["accrual"] == undefined ) {
+                    responseData[itemId][eventName]["accrual"] = [];
+                    responseData[itemId][eventName]["accrual"].push(eventArray[index]);
+                } else {
+                    responseData[itemId][eventName]["accrual"].push(eventArray[index]);
+                }
+            }
+        });
     });
+    console.log("in updating : "+ JSON.stringify(responseData));
 }
 
 function fetchRCN() {
@@ -293,8 +298,8 @@ function fetchRCN() {
         // responseData['invoice']['receivable_credit_note'] = data['receivable_credit_note'];
         // fillInvoiceRow(responseData['invoice']['receivable_credit_note']);
         console.log(JSON.stringify(data));
-        $.each(data,function(itemId, dataArray) {
-           updateResultData(itemId, dataArray);
+        $.each(data,function(itemId, eventData) {
+           updateResultData(itemId, eventData);
         });
 
         --syncInvoiceCount;
@@ -317,8 +322,8 @@ function fetchRdnData() {
     $.get('/rdn', {id: trackId, type: searchType, BU: BuName}).done(function (data) {
         Materialize.toast('RDN Details found!', 4000);
         // responseData['invoice']['receivable_debit_note'] = data['receivable_debit_note'];
-        $.each(data,function(itemId, dataArray) {
-            updateResultData(itemId, dataArray);
+        $.each(data,function(itemId, eventData) {
+            updateResultData(itemId, eventData);
         });
         --syncInvoiceCount;
         if(syncInvoiceCount == 0) {
@@ -338,8 +343,8 @@ function fetchPcnData() {
     $.get('/pcn',{id:trackId,type:searchType,BU:BuName}).done(function (data) {
         Materialize.toast('PCN Details found!', 4000);
         // responseData['invoice']['payable_credit_note'] = data['payable_credit_note'];
-        $.each(data,function(itemId, dataArray) {
-            updateResultData(itemId, dataArray);
+        $.each(data,function(itemId, eventData) {
+            updateResultData(itemId, eventData);
         });
         --syncInvoiceCount;
         if(syncInvoiceCount == 0) {
@@ -361,8 +366,8 @@ function fetchPDN() {
         // responseData['invoice']['payable_debit_note'] = data['payable_debit_note'];
         // fillInvoiceRow(responseData['invoice']['payable_debit_note']);
         // closeTable();
-        $.each(data, function(itemId,dataArray) {
-           updateResultData(itemId,dataArray);
+        $.each(data, function(itemId,eventData) {
+           updateResultData(itemId,eventData);
         });
         --syncInvoiceCount;
         if(syncInvoiceCount == 0) {
@@ -388,13 +393,6 @@ function fetchAccrualData() {
 }
 
 
-/*function closeTable() {
-    invoiceTable += '</table>';
-    $('#divInvoiceTable').append(invoiceTable);
-    $('#divInvoiceHead').show();
-    $('#divInvoiceData').show();
-    console.log("invoice table:"+invoiceTable);
-}*/
 
 
 function fillInvoiceRow(res) {

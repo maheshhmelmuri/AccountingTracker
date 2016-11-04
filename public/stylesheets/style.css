@@ -60,6 +60,19 @@ a {
   font-size: 12px;
 }
 
+.sub-sub-heading{
+  background-color: #0084AB;
+  color: #000000;
+  letter-spacing: 0.5px;
+  background: -webkit-linear-gradient(#A2CEEF, #0084AB, #A2CEEF); /* For Safari 5.1 to 6.0 */
+  background: -o-linear-gradient(#A2CEEF, #0084AB, #A2CEEF); /* For Opera 11.1 to 12.0 */
+  background: -moz-linear-gradient(#A2CEEF, #0084AB, #A2CEEF); /* For Firefox 3.6 to 15 */
+  padding: 4px 18px 4px 18px;
+  font-family: "PT Sans","Roboto","Helvetica","Arial";
+  width: auto !important;
+  font-size: 12px;
+}
+
 #btnSearch {
   background-color: #0084AB;
 }

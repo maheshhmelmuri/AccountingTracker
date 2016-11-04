@@ -11,15 +11,15 @@ module.exports =
         if( jsonReader.invoices != null || jsonReader.invoices != undefined ) {
             for (var i = 0; i < jsonReader.invoices.length; i++) {
                 jsonOutput = {};
-
+                var event = jsonReader.invoices[i].comments.toString().split(":")[1].trim();
                 if(jsonDataOrderItemEvent[jsonReader.invoices[i].invoice_ref_3]  == undefined)
                 {
                     jsonDataOrderItemEvent[jsonReader.invoices[i].invoice_ref_3] = {};
 
                 }
-                if(jsonDataOrderItemEvent[jsonReader.invoices[i].invoice_ref_3][jsonReader.invoices[i].comments]  == undefined)
+                if(jsonDataOrderItemEvent[jsonReader.invoices[i].invoice_ref_3][event]  == undefined)
                 {
-                    jsonDataOrderItemEvent[jsonReader.invoices[i].invoice_ref_3][jsonReader.invoices[i].comments] = [];
+                    jsonDataOrderItemEvent[jsonReader.invoices[i].invoice_ref_3][event] = [];
 
                 }
 
@@ -34,11 +34,11 @@ module.exports =
                 jsonOutput["Payment/disbursement id"] = "null";
                 jsonOutput["is Datafix"] = "Manual";
                 jsonOutput["shipment_id"] = jsonReader.invoices[i].external_ref_id;
-                jsonDataOrderItemEvent[jsonReader.invoices[i].invoice_ref_3][jsonReader.invoices[i].comments].push(jsonOutput);
+                jsonDataOrderItemEvent[jsonReader.invoices[i].invoice_ref_3][event].push(jsonOutput);
             }
         }
         console.log("jsonDataUpdated1:"+JSON.stringify(jsonDataOrderItemEvent));
-        return jsonDataOrderItem;
+        return jsonDataOrderItemEvent;
 
     }
 

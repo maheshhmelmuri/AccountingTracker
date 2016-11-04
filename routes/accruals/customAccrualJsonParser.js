@@ -7,14 +7,20 @@ module.exports =
     customAccJParser: function customAccrualJsonParser(rawJson) {
         var jsonReader = JSON.parse(rawJson);
         var jsonOutput = {};
-        var jsonOrderItem = {};
+        var jsonDataOrderItemEvent = {};
         if(jsonReader.accruals != null || jsonReader.accruals != undefined ) {
             for (var i = 0; i < jsonReader.accruals.length; i++) {
                 jsonOutput = {};
-                if(jsonOrderItem[jsonReader.accruals[i].accrual_ref_3] == undefined)
+                var event = jsonReader.accruals[i].comments.toString().split(":")[1].trim();
+                if(jsonDataOrderItemEvent[jsonReader.accruals[i].accrual_ref_3] == undefined)
                 {
-                    jsonOrderItem[jsonReader.accruals[i].accrual_ref_3] = [];
+                    jsonDataOrderItemEvent[jsonReader.accruals[i].accrual_ref_3] = {};
                 }
+                if(jsonDataOrderItemEvent[jsonReader.accruals[i].accrual_ref_3][event] == undefined)
+                {
+                    jsonDataOrderItemEvent[jsonReader.accruals[i].accrual_ref_3][event] = [];
+                }
+
                 jsonOutput["Type"] = jsonReader.accruals[i].accrual_items[0].accrual_type;
                 jsonOutput["Fee name"] = "Commission";
                 jsonOutput["Amount"] = "null";
@@ -27,12 +33,13 @@ module.exports =
                 jsonOutput["Status"] = jsonReader.accruals[i].status;
                 jsonOutput["Payment/disbursement id"] = "null";
                 jsonOutput["is Datafix"] = "Manual";
-                jsonOrderItem[jsonReader.accruals[i].accrual_ref_3].push(jsonOutput);
+                jsonDataOrderItemEvent[jsonReader.accruals[i].accrual_ref_3][event].push(jsonOutput);
+                //jsonOrderItem[jsonReader.accruals[i].accrual_ref_3].push(jsonOutput);
 
             }
         }
-        console.log("Accrual JSON data:"+JSON.stringify(jsonOrderItem));
-        return jsonOrderItem;
+        console.log("jsonDataUpdated2:"+JSON.stringify(jsonDataOrderItemEvent));
+        return jsonDataOrderItemEvent;
 
     }
 
