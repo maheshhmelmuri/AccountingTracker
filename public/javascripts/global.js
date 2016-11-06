@@ -53,8 +53,11 @@ function fetchData(trackingId)
     trackId=$('#inpTrackingId').val();
     searchType = $('#inpSearchType').val();
     searchDisplay = $('#inpSearchDisplay input').val();
+    console.log("the response data before cleanup :"+JSON.stringify(responseData));
     responseData = {};
-    console.log("the response data now is :"+responseData.length);
+    $('#divTableData').text("");
+    $('#divPreLoader').css('display','inline-block');
+    console.log("the response data now is :"+JSON.stringify(responseData));
     // searchType = searchType.split('_').join(' ');
     BuName = $('#inpBuId').val();
     console.log(trackId);
@@ -157,7 +160,7 @@ function generateTable()  {
     console.log("shipment: "+JSON.stringify(shipmentIds));
     console.log("the final data is : "+ JSON.stringify(responseData));
     fillSUmmaryTable();
-    var finalTable = '';
+    var finalTable = "";
     finalTable = '<div class="top-heading" style="margin-bottom: 12px">Accounting details below</div>\
 ';
     $('#divTableData').append(finalTable);
@@ -166,7 +169,7 @@ function generateTable()  {
             var finalTable = "";
             var summLine = "";
             var accordion = "";
-            var finalAccordion = '<ul class="collapsible" data-collapsible="accordion">';;
+            var finalAccordion = '<ul class="collapsible popout" data-collapsible="accordion">';;
             var eventLevelTable = "";
             // var summLine = getSummaryLine(key,itemHash['invoice'][0]['shipment_id']);
             $.each(itemHash, function(eventName, data) {
@@ -195,6 +198,7 @@ function generateTable()  {
     });
 
     $('.collapsible').collapsible();
+    $('#divPreLoader').css('display','none');
     console.log("responseData: "+ JSON.stringify(responseData));
 }
 

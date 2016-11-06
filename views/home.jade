@@ -24,8 +24,16 @@ block content
             .input-field.col.s12
                 input#inpTrackingId(type='text')
                 label(for='inpTrackingId') Search Id
-        .col.s2(style='padding-top:1.2%')
+        .col.s1(style='padding-top:1.2%')
             button#btnSearch.waves-effect.waves-light.btn(onclick='fetchData(this)') Search
+        #divPreLoader.preloader-wrapper.small.active.center(style='margin-top: 1.2%;display: none')
+            .spinner-layer(style='border-color: #01579B')
+                .circle-clipper.left
+                    .circle
+                .gap-patch
+                    .circle(style='background-color: #01579B')
+                .circle-clipper.right
+                    .circle
     div
         #divSummaryHead.top-heading(style='display:none')
     #divOrderSummary.row(style='padding-top:1%;padding-left:1%;display:none')
