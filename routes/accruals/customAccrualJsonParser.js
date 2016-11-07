@@ -33,17 +33,25 @@ module.exports =
                 jsonOutput["Due date"] = "null";
                 jsonOutput["Setteled Date"] = "null";
                 jsonOutput["Status"] = jsonReader.accruals[i].status;
-                jsonOutput["Payment/disbursement id"] = "null";
-                jsonOutput["is Datafix"] = "Manual";
                 //extra details
-                extraDetails["Total Payable"] = "null";
-                extraDetails["GMV"] = "null";
-                extraDetails["Fee Exp"] = "null";
-                extraDetails["AGM ID"] = "null";
-                extraDetails["Vertical"] = "null";
-                extraDetails["Brand"] = "null";
-                extraDetails["Invoice Type"] = "null";
-                extraDetails["FSN"] = "null";
+                extraDetails["FSN"] = jsonReader.accruals[i].accrual_attributes["fsn"];
+                extraDetails["Order Date"] = dateFormatter(jsonReader.accruals[i].accrual_attributes["date"]);
+                extraDetails["Service Profile"] = jsonReader.accruals[i].accrual_attributes["service_profile"];
+                extraDetails["Vertical"] = jsonReader.accruals[i].accrual_attributes["vertical"];
+                extraDetails["Zone"] = jsonReader.accruals[i].accrual_attributes["zone"];
+                extraDetails["Invoice Type"] = jsonReader.accruals[i].accrual_attributes["invoice_type"];
+                extraDetails["Weight"] = jsonReader.accruals[i].accrual_attributes["accrual_reporting_ref_9"];
+                //extraDetails["Weight Upper Bound"] = jsonReader.accruals[i].accrual_attributes["weight_upper_bound"];
+                //extraDetails["Weight Lower Bound"] = jsonReader.accruals[i].accrual_attributes["weight_lower_bound"];
+                extraDetails["Seller ID"] = jsonReader.accruals[i].accrual_attributes["seller_id"];
+                extraDetails["Accrual Ratio"] = jsonReader.accruals[i].accrual_attributes["accrualRatio"];
+                extraDetails["height"] = jsonReader.accruals[i].accrual_attributes["height"];
+                extraDetails["Length"] = jsonReader.accruals[i].accrual_attributes["length"];
+                extraDetails["Breadth"] = jsonReader.accruals[i].accrual_attributes["breadth"];
+                extraDetails["Agreement ID"] = jsonReader.accruals[i].accrual_attributes["accrual_reporting_ref_11"];
+                extraDetails["is replacement"] = jsonReader.accruals[i].accrual_attributes["replacement"];
+                extraDetails["Expression"] = jsonReader.accruals[i].accrual_attributes["expression"];
+                extraDetails["Expression variables"] = jsonReader.accruals[i].accrual_attributes["parameters"];
                 jsonOutput["extra_details"] = extraDetails;
                 jsonDataOrderItemEvent[jsonReader.accruals[i].accrual_ref_3][event].push(jsonOutput);
 

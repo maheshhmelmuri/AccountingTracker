@@ -24,20 +24,17 @@ module.exports =
                 }
 
                 jsonOutput["Type"] = jsonReader.invoices[i].type;
-                jsonOutput["SubType"] = "Sale";
+                jsonOutput["SubType"] = jsonReader.invoices[i].invoice_ref_4;
                 jsonOutput["Amount"] = jsonReader.invoices[i].total_amount;
                 jsonOutput["Created date"] = dateFormatter(jsonReader.invoices[i].created_at);
                 jsonOutput["Updated date"] = dateFormatter(jsonReader.invoices[i].updated_at);
                 jsonOutput["Due date"] = dateFormatter(jsonReader.invoices[i].due_date);
                 jsonOutput["Status"] = jsonReader.invoices[i].status;
-                jsonOutput["Setteled Date"] = dateFormatter(jsonReader.invoices[i].due_date);
-                jsonOutput["Payment/disbursement id"] = "null";
-                jsonOutput["is Datafix"] = "Manual";
+                jsonOutput["Setteled Date"] = dateFormatter(jsonReader.invoices[i].invoice_ref_date_3);
                 jsonOutput["shipment_id"] = jsonReader.invoices[i].external_ref_id;
                 jsonDataOrderItemEvent[jsonReader.invoices[i].invoice_ref_3][event].push(jsonOutput);
             }
         }
-        console.log("jsonDataUpdated1:"+JSON.stringify(jsonDataOrderItemEvent));
         return jsonDataOrderItemEvent;
 
     }

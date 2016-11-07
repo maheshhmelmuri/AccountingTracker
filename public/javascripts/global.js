@@ -19,7 +19,7 @@ var url = '/api';
 var shipmentIds = [];
 var syncInvoiceCount = 0;
 var syncAccrualCount = 0;
-
+//var ignoreDisplayTable = ['shipment_id'];
 var ignoreDisplayTable = ['shipment_id','extra_details'];
 
 var buOptionMapping = '{"FKMP":\
@@ -61,7 +61,7 @@ function fetchData(trackingId)
     // searchType = searchType.split('_').join(' ');
     BuName = $('#inpBuId').val();
     console.log(trackId);
-    readResponse();
+    //readResponse();
     //fetch table header
     $.get('/headerDef',{BU:BuName}).done(function(data) {
        console.log("the table header is found");
@@ -87,6 +87,7 @@ function getSummaryLine(ItemId, shipmentId) {
 }
 
 function getInvoiceTable(invoiceArray) {
+    console.log("enteres invoice table");
     var invoiceTable = '<div id="divInvoiceTable" style="padding-top:1%;padding-left: 1%;padding-right: 1%" class="row">\
         <div class="col s12">\
         <table id="invoiceTable"> \
@@ -108,9 +109,7 @@ function getInvoiceTable(invoiceArray) {
     $.each(invoiceArray, function(index) {
         invoiceTable += '</tr>';
        $.each(invoiceArray[index], function(key,value) {
-           console.log("ignoretable ius type of :"+ JSON.stringify(ignoreDisplayTable));
            if ( $.inArray(key,ignoreDisplayTable) < 0 ) {
-               console.log("the key to use: "+key+ " the value of in array is: "+$.inArray(ignoreDisplayTable,key));
                invoiceTable += '<td>'+value+'</td>';
            }
        }); 
@@ -121,6 +120,7 @@ function getInvoiceTable(invoiceArray) {
 }
 
 function getAccrualTable(accrualArray) {
+    console.log("accrual table entered");
     var accrualTable = '<div id="divAccrualTable" style="padding-top:1%;padding-left: 1%;padding-right: 1%" class="row">\
     <div class="col s12">\
     <table id="accrualTable">\
@@ -140,16 +140,48 @@ function getAccrualTable(accrualArray) {
         accrualTable += '</tr>';
         $.each(accrualArray[index], function(key,value) {
             if ( $.inArray(key,ignoreDisplayTable) < 0 ) {
-                accrualTable += '<td>' + value + '</td>';
+
+                if(key == "Type") {
+                    accrualTable += '<td class="typeColumn" id="AccrId-'+index+'" onclick="showExtraDetails(this)"><u>' + value + '</u></td>';
+
+                }else {
+                    accrualTable += '<td>' + value + '</td>';
+                }
             }
         });
+        accrualTable += addExtraDetails(accrualArray[index]["extra_details"],index);
     });
 
     accrualTable += '</tbody></table></div></div>';
+    console.log("accrual table: "+accrualTable);
+
     return accrualTable;
 
 }
 
+function addExtraDetails(extraDetails,rowId) {
+    //var extraDetailTable = '<td>';
+    var padding = '<td></td>'
+    var header = '';
+    var val = '';
+    var accHeadLen =
+    $.each(extraDetails,function (key,value) {
+        header +='<td>' +key+ '</td>';
+        val += '<td>' +value+ '</td>';
+    });
+
+    return '<tr class="extraDetail-'+rowId+'" style="font-weight:bold; display: none">' +padding+header+ ' </tr>' +
+        '<tr class="extraDetail-'+rowId+'" style="display: none">' +padding+val+ '</tr>';
+
+}
+
+function showExtraDetails(element) {
+
+    var id = element.id.split('-')[1];
+    var check = eval('$(".extraDetail-'+id+'").is(":visible")');
+    var detRow = $('.extraDetail-'+id+'');
+    check ? detRow.hide() : detRow.show();
+}
 function getEventLine(eventName) {
     return '<div>\
     <div class="sub-sub-heading">Event :'+eventName+'</div>\
@@ -157,9 +189,10 @@ function getEventLine(eventName) {
 }
 
 function generateTable()  {
-    console.log("shipment: "+JSON.stringify(shipmentIds));
-    console.log("the final data is : "+ JSON.stringify(responseData));
-    fillSUmmaryTable();
+    // console.log("shipment: "+JSON.stringify(shipmentIds));
+    // console.log("the final data is : "+ JSON.stringify(responseData));
+    console.log("Generate table entered");
+    //fillSUmmaryTable();
     var finalTable = "";
     finalTable = '<div class="top-heading" style="margin-bottom: 12px">Accounting details below</div>\
 ';
@@ -169,11 +202,11 @@ function generateTable()  {
             var finalTable = "";
             var summLine = "";
             var accordion = "";
-            var finalAccordion = '<ul class="collapsible popout" data-collapsible="accordion">';;
+            var finalAccordion = '<ul class="collapsible" data-collapsible="accordion">';
             var eventLevelTable = "";
             // var summLine = getSummaryLine(key,itemHash['invoice'][0]['shipment_id']);
             $.each(itemHash, function(eventName, data) {
-                console.log("DEBUG - eventData: "+JSON.stringify(data));
+                // console.log("DEBUG - eventData: "+JSON.stringify(data));
                 //accordion creation
                 accordion = "";
                 accordion += '<li>\
@@ -188,7 +221,7 @@ function generateTable()  {
                     </li>';
 
                 finalAccordion += accordion;
-                console.log(accordion);
+                // console.log(accordion);
                 $('.collapsible').collapsible();
             });
             finalAccordion += '</ul>';
@@ -199,16 +232,16 @@ function generateTable()  {
 
     $('.collapsible').collapsible();
     $('#divPreLoader').css('display','none');
-    console.log("responseData: "+ JSON.stringify(responseData));
+    // console.log("responseData: "+ JSON.stringify(responseData));
 }
 
-function fillSUmmaryTable() {
-    var summaryHead = $('#divSummaryHead');
-    summaryHead.text("Summary of "+searchDisplay+": "+trackId);
-    summaryHead.show();
-    fillSummaryTableData(); //should move this to other function
-    $('#divOrderSummary').show();
-}
+// function fillSUmmaryTable() {
+//     var summaryHead = $('#divSummaryHead');
+//     summaryHead.text("Summary of "+searchDisplay+": "+trackId);
+//     summaryHead.show();
+//     fillSummaryTableData(); //should move this to other function
+//     $('#divOrderSummary').show();
+// }
 
 function fetchInvoiceDetails() {
     fetchRCN();
@@ -218,6 +251,8 @@ function fetchInvoiceDetails() {
     fetchPcnData();
 
     fetchRdnData();
+
+    fetchSummaryTableData();
 
 }
 
@@ -234,18 +269,19 @@ function fetchRevenueAccrual(searchId, searchType) {
         --syncAccrualCount;
         if(syncAccrualCount == 0) {
             generateTable();
-            console.log("accrual to zer, data is: "+ JSON.stringify(responseData));
+            // console.log("accrual to zer, data is: "+ JSON.stringify(responseData));
         }
         // closeTable();
     }).fail(function(data) {
         console.log("failed while fetching RCN");
         --syncAccrualCount;
         if(syncAccrualCount == 0) {
-            console.log("accrual to zer, data is: "+ JSON.stringify(responseData));
+             // console.log("accrual to zer, data is: "+ JSON.stringify(responseData));
             generateTable();
         }
     });
 }
+
 
 function fetchCostAccrual(searchId, searchType) {
     ++syncAccrualCount;
@@ -254,7 +290,7 @@ function fetchCostAccrual(searchId, searchType) {
         Materialize.toast('Cost Accrual Details found!', 4000);
         // responseData['invoice']['receivable_credit_note'] = data['receivable_credit_note'];
         // fillInvoiceRow(responseData['invoice']['receivable_credit_note']);
-        console.log(JSON.stringify(data));
+        // console.log(JSON.stringify(data));
         $.each(data,function(itemId, dataArray) {
             updateResultData(itemId, dataArray);
         });
@@ -262,14 +298,14 @@ function fetchCostAccrual(searchId, searchType) {
         --syncAccrualCount;
         if(syncAccrualCount == 0) {
             generateTable();
-            console.log("accrual to zer, data is: "+ JSON.stringify(responseData));
+            // console.log("accrual to zer, data is: "+ JSON.stringify(responseData));
         }
         // closeTable();
     }).fail(function(data) {
         console.log("failed while fetching RCN");
         --syncAccrualCount;
         if(syncAccrualCount == 0) {
-            console.log("accrual to zer, data is: "+ JSON.stringify(responseData));
+            // console.log("accrual to zer, data is: "+ JSON.stringify(responseData));
             generateTable();
         }
     });
@@ -291,7 +327,7 @@ function updateResultData(itemId, eventData) {
                 if ( responseData[itemId][eventName]["invoice"] == undefined ) {
                     responseData[itemId][eventName]["invoice"] = [];
                     responseData[itemId][eventName]["invoice"].push(eventArray[index]);
-                    console.log("res:"+responseData);
+                    // console.log("res:"+responseData);
                 } else {
                     responseData[itemId][eventName]["invoice"].push(eventArray[index]);
                 }
@@ -305,7 +341,7 @@ function updateResultData(itemId, eventData) {
             }
         });
     });
-    console.log("in updating : "+ JSON.stringify(responseData));
+    // console.log("in updating : "+ JSON.stringify(responseData));
 }
 
 function fetchRCN() {
@@ -315,7 +351,7 @@ function fetchRCN() {
         Materialize.toast('RCN Details found!', 4000);
         // responseData['invoice']['receivable_credit_note'] = data['receivable_credit_note'];
         // fillInvoiceRow(responseData['invoice']['receivable_credit_note']);
-        console.log(JSON.stringify(data));
+        // console.log(JSON.stringify(data));
         $.each(data,function(itemId, eventData) {
            updateResultData(itemId, eventData);
         });
@@ -400,6 +436,21 @@ function fetchPDN() {
     });
 }
 
+function fetchSummaryTableData() {
+    $.get('/summaryTable',{id:trackId,type:searchType,BU:BuName}).done(function (data) {
+        Materialize.toast('Summary Details found!', 4000);
+        responseData["summary_detail"] = data;
+        var summaryHead = $('#divSummaryHead');
+        summaryHead.text("Summary of "+searchDisplay+": "+trackId);
+        summaryHead.show();
+        fillSummaryTableData(); //should move this to other function
+        $('#divOrderSummary').show();
+
+    }).fail(function(data) {
+        console.log("failed while fetching summary Details");
+    });
+}
+
 //TODO
 function fetchAccrualData() {
     console.log("shipment: "+JSON.stringify(shipmentIds));
@@ -437,15 +488,14 @@ function createInvoiceHeader() {
 }
 
 function fillSummaryTableData() {
-    var summaryDetail = {};
-    summaryDetail = responseData['summary_detail'];
+
     var summTable = $('#summaryTable');
-    $.each(summaryDetail,function (rowKey,rowValue) {
+    $.each(responseData["summary_detail"],function (rowKey,rowValue) {
         $('#'+rowKey).html(rowValue);
         console.log("value of row:" + rowValue);
 
     });
-    console.log("summary detail while filling :"+ JSON.stringify(summaryDetail));
+    //console.log("summary detail while filling :"+ JSON.stringify(summaryDetail));
 }
 
 function readResponse(response) {
