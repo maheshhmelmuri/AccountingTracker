@@ -21,6 +21,7 @@ var syncInvoiceCount = 0;
 var syncAccrualCount = 0;
 //var ignoreDisplayTable = ['shipment_id'];
 var ignoreDisplayTable = ['shipment_id','extra_details'];
+var extraDetailsHtml = '';
 
 var buOptionMapping = '{"FKMP":\
                                 {\
@@ -149,6 +150,7 @@ function getAccrualTable(accrualArray) {
                 }
             }
         });
+        extraDetailsHtml = '';
         accrualTable += addExtraDetails(accrualArray[index]["extra_details"],index);
     });
 
@@ -160,18 +162,45 @@ function getAccrualTable(accrualArray) {
 }
 
 function addExtraDetails(extraDetails,rowId) {
+    console.log("calling fro row ID: "+rowId);
     //var extraDetailTable = '<td>';
-    var padding = '<td></td>'
+    var tempDetails = extraDetails;
+    var padding = '<td></td>';
     var header = '';
     var val = '';
-    var accHeadLen =
-    $.each(extraDetails,function (key,value) {
-        header +='<td>' +key+ '</td>';
-        val += '<td>' +value+ '</td>';
-    });
+    var accHeadLen = responseData['TableHeader']['accrual'];
+    var headerLength = accHeadLen.length;
+    console.log("the headers length from response data is :"+ accHeadLen.length + "and extra detals is"+Object.keys(extraDetails).length );
+    var diff = headerLength - Object.keys(extraDetails).length;
 
-    return '<tr class="extraDetail-'+rowId+'" style="font-weight:bold; display: none">' +padding+header+ ' </tr>' +
-        '<tr class="extraDetail-'+rowId+'" style="display: none">' +padding+val+ '</tr>';
+    if ( diff >= 0 ) {
+        $.each(tempDetails,function (key,value) {
+            header +='<td>' +key+ '</td>';
+            val += '<td>' +value+ '</td>';
+        });
+
+        for( var i=1 ; i<diff ; i++ ) {
+            header +='<td></td>';
+            val += '<td></td>';
+        }
+        extraDetailsHtml += '<tr class="extraDetail-'+rowId+'" style="font-weight:bold; display: none">' +padding+header+ ' </tr>\
+            <tr class="extraDetail-'+rowId+'" style="display: none">' +padding+val+ '</tr>';
+    } else {
+        var count = 0;
+        $.each(tempDetails,function (key,value) {
+            if(++count <= headerLength - 1) {
+                header +='<td>' +key+ '</td>';
+                val += '<td>' +value+ '</td>';
+                delete tempDetails[key];
+            }
+        });
+        extraDetailsHtml += '<tr class="extraDetail-'+rowId+'" style="font-weight:bold; display: none">' +padding+header+ ' </tr>\
+            <tr class="extraDetail-'+rowId+'" style="display: none">' +padding+val+ '</tr>';
+        console.log("its in else tempdetails are: "+JSON.stringify(tempDetails));
+        addExtraDetails(tempDetails, rowId);
+    }
+
+    return extraDetailsHtml;
 
 }
 
@@ -182,6 +211,7 @@ function showExtraDetails(element) {
     var detRow = $('.extraDetail-'+id+'');
     check ? detRow.hide() : detRow.show();
 }
+
 function getEventLine(eventName) {
     return '<div>\
     <div class="sub-sub-heading">Event :'+eventName+'</div>\
