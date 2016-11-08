@@ -232,7 +232,7 @@ function generateTable()  {
             var finalTable = "";
             var summLine = "";
             var accordion = "";
-            var finalAccordion = '<ul class="collapsible" data-collapsible="accordion">';
+            var finalAccordion = '<ul class="collapsible" data-collapsible="expandable">';
             var eventLevelTable = "";
             // var summLine = getSummaryLine(key,itemHash['invoice'][0]['shipment_id']);
             $.each(itemHash, function(eventName, data) {
