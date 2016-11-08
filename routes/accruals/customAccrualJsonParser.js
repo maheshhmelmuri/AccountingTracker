@@ -64,5 +64,9 @@ module.exports =
 
 };
 function dateFormatter(inputDate) {
-    return inputDate.toString().substring(0, 10) + " " + inputDate.toString().substring(11, 19).toString();
+    if(inputDate == "" || inputDate == null ) {
+        return "null";
+    } else  {
+        return inputDate.toString().substring(0, 10) + " " + inputDate.toString().substring(11, 19).toString();
+    }
 }
