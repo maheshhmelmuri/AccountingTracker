@@ -93,3 +93,9 @@ table, th, td {
 #divTableData {
   margin-bottom: 4%;
 }
+
+[class^='extraDetail']{
+  font-size: smaller;
+  background-color: #dcedc8;
+
+}

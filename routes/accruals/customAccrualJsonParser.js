@@ -30,9 +30,10 @@ module.exports =
                 jsonOutput["Total Amount"] = jsonReader.accruals[i].total_amount;
                 jsonOutput["Created date"] = dateFormatter(jsonReader.accruals[i].created_at);
                 jsonOutput["Updated date"] = dateFormatter(jsonReader.accruals[i].updated_at);
-                jsonOutput["Due date"] = "null";
-                jsonOutput["Setteled Date"] = "null";
+                jsonOutput["Due Date"] = "null";
+                jsonOutput["Settled Date"] = "null";
                 jsonOutput["Status"] = jsonReader.accruals[i].status;
+                jsonOutput["invoice_id"] = jsonReader.accruals[i].invoice_id;
                 //extra details
                 extraDetails["FSN"] = jsonReader.accruals[i].accrual_attributes["fsn"];
                 extraDetails["Order Date"] = dateFormatter(jsonReader.accruals[i].accrual_attributes["date"]);
@@ -57,7 +58,7 @@ module.exports =
 
             }
         }
-        console.log("jsonDataUpdated2:"+JSON.stringify(jsonDataOrderItemEvent));
+        //console.log("jsonDataUpdated2:"+JSON.stringify(jsonDataOrderItemEvent));
         return jsonDataOrderItemEvent;
 
     }

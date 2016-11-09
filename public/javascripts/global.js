@@ -17,10 +17,14 @@ var invoiceTable = "";
 var url = '/api';
 // var Set = require("collections/set");
 var shipmentIds = [];
+// var invoiceIds =[];
+var invoiceIdHash = {};
 var syncInvoiceCount = 0;
 var syncAccrualCount = 0;
+var synAccrualInvoiceCount =0;
+var invoiceIdFetchCount = 0;
 //var ignoreDisplayTable = ['shipment_id'];
-var ignoreDisplayTable = ['shipment_id','extra_details'];
+var ignoreDisplayTable = ['shipment_id','extra_details','invoice_id'];
 var extraDetailsHtml = '';
 
 var buOptionMapping = '{"FKMP":\
@@ -120,7 +124,7 @@ function getInvoiceTable(invoiceArray) {
     return invoiceTable;
 }
 
-function getAccrualTable(accrualArray) {
+function getAccrualTable(accrualArray,itemID,eventName) {
     console.log("accrual table entered");
     var accrualTable = '<div id="divAccrualTable" style="padding-top:1%;padding-left: 1%;padding-right: 1%" class="row">\
     <div class="col s12">\
@@ -141,9 +145,8 @@ function getAccrualTable(accrualArray) {
         accrualTable += '</tr>';
         $.each(accrualArray[index], function(key,value) {
             if ( $.inArray(key,ignoreDisplayTable) < 0 ) {
-
                 if(key == "Type") {
-                    accrualTable += '<td class="typeColumn" id="AccrId-'+index+'" onclick="showExtraDetails(this)"><u>' + value + '</u></td>';
+                    accrualTable += '<td class="typeColumn" id="AccrId-'+itemID+'_'+eventName+'_'+index+'" onclick="showExtraDetails(this)"><u>' + value + '</u></td>';
 
                 }else {
                     accrualTable += '<td>' + value + '</td>';
@@ -151,7 +154,7 @@ function getAccrualTable(accrualArray) {
             }
         });
         extraDetailsHtml = '';
-        accrualTable += addExtraDetails(accrualArray[index]["extra_details"],index);
+        accrualTable += addExtraDetails(accrualArray[index]["extra_details"],itemID,eventName,index);
     });
 
     accrualTable += '</tbody></table></div></div>';
@@ -161,7 +164,7 @@ function getAccrualTable(accrualArray) {
 
 }
 
-function addExtraDetails(extraDetails,rowId) {
+function addExtraDetails(extraDetails,itemID,eventName,rowId) {
     console.log("calling fro row ID: "+rowId);
     //var extraDetailTable = '<td>';
     var tempDetails = extraDetails;
@@ -172,6 +175,7 @@ function addExtraDetails(extraDetails,rowId) {
     var headerLength = accHeadLen.length;
     console.log("the headers length from response data is :"+ accHeadLen.length + "and extra detals is"+Object.keys(extraDetails).length );
     var diff = headerLength - Object.keys(extraDetails).length;
+    var indexId= itemID+'_'+eventName+'_'+rowId;
 
     if ( diff >= 0 ) {
         $.each(tempDetails,function (key,value) {
@@ -183,8 +187,8 @@ function addExtraDetails(extraDetails,rowId) {
             header +='<td></td>';
             val += '<td></td>';
         }
-        extraDetailsHtml += '<tr class="extraDetail-'+rowId+'" style="font-weight:bold; display: none">' +padding+header+ ' </tr>\
-            <tr class="extraDetail-'+rowId+'" style="display: none">' +padding+val+ '</tr>';
+        extraDetailsHtml += '<tr class="extraDetail-'+indexId+'" style="font-weight:bold; display: none">' +padding+header+ ' </tr>\
+            <tr class="extraDetail-'+indexId+'" style="display: none">' +padding+val+ '</tr>';
     } else {
         var count = 0;
         $.each(tempDetails,function (key,value) {
@@ -194,10 +198,10 @@ function addExtraDetails(extraDetails,rowId) {
                 delete tempDetails[key];
             }
         });
-        extraDetailsHtml += '<tr class="extraDetail-'+rowId+'" style="font-weight:bold; display: none">' +padding+header+ ' </tr>\
-            <tr class="extraDetail-'+rowId+'" style="display: none">' +padding+val+ '</tr>';
+        extraDetailsHtml += '<tr class="extraDetail-'+indexId+'" style="font-weight:bold; display: none">' +padding+header+ ' </tr>\
+            <tr class="extraDetail-'+indexId+'" style="display: none">' +padding+val+ '</tr>';
         console.log("its in else tempdetails are: "+JSON.stringify(tempDetails));
-        addExtraDetails(tempDetails, rowId);
+        addExtraDetails(tempDetails,itemID,eventName,rowId);
     }
 
     return extraDetailsHtml;
@@ -219,59 +223,52 @@ function getEventLine(eventName) {
 }
 
 function generateTable()  {
-    // console.log("shipment: "+JSON.stringify(shipmentIds));
-    // console.log("the final data is : "+ JSON.stringify(responseData));
-    console.log("Generate table entered");
-    //fillSUmmaryTable();
-    var finalTable = "";
-    finalTable = '<div class="top-heading" style="margin-bottom: 12px">Accounting details below</div>\
+    if(Object.keys(invoiceIdHash).length == invoiceIdFetchCount) {
+        console.log("Generate table entered");
+        //fillSUmmaryTable();
+        var finalTable = "";
+        finalTable = '<div class="top-heading" style="margin-bottom: 12px">Accounting details below</div>\
 ';
-    $('#divTableData').append(finalTable);
-    $.each(responseData, function(itemID,itemHash) {
-        if(itemID != "summary_detail" && itemID != "TableHeader") {
-            var finalTable = "";
-            var summLine = "";
-            var accordion = "";
-            var finalAccordion = '<ul class="collapsible" data-collapsible="expandable">';
-            var eventLevelTable = "";
-            // var summLine = getSummaryLine(key,itemHash['invoice'][0]['shipment_id']);
-            $.each(itemHash, function(eventName, data) {
-                // console.log("DEBUG - eventData: "+JSON.stringify(data));
-                //accordion creation
-                accordion = "";
-                accordion += '<li>\
+        $('#divTableData').append(finalTable);
+        $.each(responseData, function(itemID,itemHash) {
+            if(itemID != "summary_detail" && itemID != "TableHeader") {
+                var finalTable = "";
+                var summLine = "";
+                var accordion = "";
+                var finalAccordion = '<ul class="collapsible" data-collapsible="expandable">';
+                var eventLevelTable = "";
+                // var summLine = getSummaryLine(key,itemHash['invoice'][0]['shipment_id']);
+                $.each(itemHash, function(eventName, data) {
+                    // console.log("DEBUG - eventData: "+JSON.stringify(data));
+                    //accordion creation
+                    accordion = "";
+                    accordion += '<li>\
                 <div class="collapsible-header sub-sub-heading" style="color: white"> Event : '+eventName+'</div>';
 
-                var eventLine = getEventLine(eventName);
-                summLine = getSummaryLine(itemID,data['invoice'][0]['shipment_id']);
-                var invoice_table = getInvoiceTable(data['invoice']);
-                var accrual_table = getAccrualTable(data['accrual']);
-                // eventLevelTable += eventLine+invoice_table+accrual_table;
-                accordion += '<div class="collapsible-body">'+invoice_table+accrual_table+'</div>\
+                    var eventLine = getEventLine(eventName);
+                    summLine = getSummaryLine(itemID,data['invoice'][0]['shipment_id']);
+                    var invoice_table = getInvoiceTable(data['invoice']);
+                    var accrual_table = getAccrualTable(data['accrual'],itemID,eventName);
+                    // eventLevelTable += eventLine+invoice_table+accrual_table;
+                    accordion += '<div class="collapsible-body">'+invoice_table+accrual_table+'</div>\
                     </li>';
 
-                finalAccordion += accordion;
-                // console.log(accordion);
-                $('.collapsible').collapsible();
-            });
-            finalAccordion += '</ul>';
-            finalTable += summLine + finalAccordion;
-            $('#divTableData').append(finalTable);
-        }
-    });
+                    finalAccordion += accordion;
+                    // console.log(accordion);
+                    $('.collapsible').collapsible();
+                });
+                finalAccordion += '</ul>';
+                finalTable += summLine + finalAccordion;
+                $('#divTableData').append(finalTable);
+            }
+        });
 
-    $('.collapsible').collapsible();
-    $('#divPreLoader').css('display','none');
-    // console.log("responseData: "+ JSON.stringify(responseData));
+        $('.collapsible').collapsible();
+        $('#divPreLoader').css('display','none');
+        // console.log("responseData: "+ JSON.stringify(responseData));
+    }
+
 }
-
-// function fillSUmmaryTable() {
-//     var summaryHead = $('#divSummaryHead');
-//     summaryHead.text("Summary of "+searchDisplay+": "+trackId);
-//     summaryHead.show();
-//     fillSummaryTableData(); //should move this to other function
-//     $('#divOrderSummary').show();
-// }
 
 function fetchInvoiceDetails() {
     fetchRCN();
@@ -291,53 +288,66 @@ function fetchRevenueAccrual(searchId, searchType) {
     console.log("calling Revenue Accrual");
     $.get('/racc',{id:searchId,type:searchType,BU:BuName}).done(function (data) {
         Materialize.toast('Revenue Accrual Details found!', 4000);
-        console.log(JSON.stringify(data));
+        //console.log(JSON.stringify(data));
         $.each(data,function(itemId, dataArray) {
+            $.each(dataArray,function (eventName,eventData) {
+                invoiceIdHash = {};
+                $.each(eventData,function (index) {
+                    if( invoiceIdHash[eventData[index]["invoice_id"]] == undefined ) {
+                        invoiceIdHash[eventData[index]["invoice_id"]+"-"+itemId] = {};
+                        console.log("item id is : "+itemId+" and eventName :"+eventName);
+                        invoiceIdHash[eventData[index]["invoice_id"]+"-"+itemId]["indexes"] = itemId + "-" + eventName + "-" + index;
+                    } else {
+                        invoiceIdHash[eventData[index]["invoice_id"]+"-"+itemId]["indexes"] = invoiceIdHash[eventData[index]["invoice_id"]]["indexes"] + "-" + index;
+                    }
+
+                });
+            });
+            //console.log("dataArray"+JSON.stringify(dataArray))
             updateResultData(itemId, dataArray);
         });
 
         --syncAccrualCount;
         if(syncAccrualCount == 0) {
-            generateTable();
-            // console.log("accrual to zer, data is: "+ JSON.stringify(responseData));
+        //     // generateTable();
+        //     // console.log("accrual to zer, data is: "+ JSON.stringify(responseData));
+            fetchAccrualInvoiceData();
         }
         // closeTable();
     }).fail(function(data) {
         console.log("failed while fetching RCN");
         --syncAccrualCount;
         if(syncAccrualCount == 0) {
-             // console.log("accrual to zer, data is: "+ JSON.stringify(responseData));
-            generateTable();
+        //      // console.log("accrual to zer, data is: "+ JSON.stringify(responseData));
+        //     // generateTable();
+            fetchAccrualInvoiceData();
         }
     });
 }
 
 
 function fetchCostAccrual(searchId, searchType) {
-    ++syncAccrualCount;
+    // ++syncAccrualCount;
     console.log("calling Cost Acrual");
     $.get('/cacc',{id:searchId,type:searchType,BU:BuName}).done(function (data) {
         Materialize.toast('Cost Accrual Details found!', 4000);
-        // responseData['invoice']['receivable_credit_note'] = data['receivable_credit_note'];
-        // fillInvoiceRow(responseData['invoice']['receivable_credit_note']);
-        // console.log(JSON.stringify(data));
         $.each(data,function(itemId, dataArray) {
             updateResultData(itemId, dataArray);
         });
 
-        --syncAccrualCount;
-        if(syncAccrualCount == 0) {
-            generateTable();
-            // console.log("accrual to zer, data is: "+ JSON.stringify(responseData));
-        }
+        // --syncAccrualCount;
+        // if(syncAccrualCount == 0) {
+        //     // generateTable();
+        //     // console.log("accrual to zer, data is: "+ JSON.stringify(responseData));
+        // }
         // closeTable();
     }).fail(function(data) {
         console.log("failed while fetching RCN");
-        --syncAccrualCount;
-        if(syncAccrualCount == 0) {
-            // console.log("accrual to zer, data is: "+ JSON.stringify(responseData));
-            generateTable();
-        }
+        // --syncAccrualCount;
+        // if(syncAccrualCount == 0) {
+        //     // console.log("accrual to zer, data is: "+ JSON.stringify(responseData));
+        //     // generateTable();
+        // }
     });
 }
 
@@ -371,6 +381,7 @@ function updateResultData(itemId, eventData) {
             }
         });
     });
+    // fetchAccrualInvoiceData();
     // console.log("in updating : "+ JSON.stringify(responseData));
 }
 
@@ -489,6 +500,68 @@ function fetchAccrualData() {
         fetchRevenueAccrual(shipmentIds[index],"merchant_ref_id");
         fetchCostAccrual(shipmentIds[index],"merchant_ref_id");
     });
+}
+
+function fetchAccrualInvoiceData()
+{
+    console.log("this is called");
+    console.log("the invoice hash is: "+JSON.stringify(invoiceIdHash));
+    var keyArray = Object.keys(invoiceIdHash);
+    $.each( keyArray , function (index) {
+        fetchAccrualInvoice(keyArray[index],"invoice_id");
+        });
+
+}
+
+function fetchAccrualInvoice(invoiceId, searchType)
+     {
+        // ++synAccrualInvoiceCount;
+        console.log("calling Revenue invoice");
+        $.get('/accIn',{id:invoiceId,type:searchType,BU:BuName}).done(function (data) {
+            ++invoiceIdFetchCount;
+            Materialize.toast('Revenue invoice Details found!', 4000);
+            console.log("da:"+JSON.stringify(data));
+            // $.extend(invoiceIdHash[invoiceId],data);
+            // $.each(invoiceIdHash,)
+            var splitArray = invoiceIdHash[invoiceId]["indexes"].split('-');
+            for( var i = 2; i< splitArray.length; i++ ) {
+                responseData[splitArray[0]][splitArray[1]]["accrual"][splitArray[i]]["Due Date"] = data["Due Date"];
+                responseData[splitArray[0]][splitArray[1]]["accrual"][splitArray[i]]["Settled Date"] = data["Settled Date"];
+            }
+
+            // --synAccrualInvoiceCount;
+            // if(synAccrualInvoiceCount == 0 ) {
+            //     console.log("invoice ID hash : "+JSON.stringify(invoiceIdHash));
+            //     $.each(invoiceIdHash, function(invoiceId, hash) {
+            //        var splitArray = hash["indexes"].split('-');
+            //        console.log("split array :"+JSON.stringify(splitArray));
+            //        for(var i=2; i<splitArray.length; i++ ) {
+            //            console.log(splitArray[0] + "- "+splitArray[1]+" -"+splitArray[i]);
+            //            console.log("assign "+ responseData[splitArray[0]][splitArray[1]]["accrual"][splitArray[i]]["Due Date"] + "to "+ hash["Due Date"]);
+            //            console.log("assign "+ responseData[splitArray[0]][splitArray[1]]["accrual"][splitArray[i]]["Settled Date"] + "to "+ hash["Settled Date"]);
+            //            responseData[splitArray[0]][splitArray[1]]["accrual"][splitArray[i]]["Due Date"] = hash["Due Date"];
+            //            responseData[splitArray[0]][splitArray[1]]["accrual"][splitArray[i]]["Settled Date"] = hash["Settled Date"];
+            //        }
+            //     });
+            //     console.log("the final result data with DD/SD : "+JSON.stringify(responseData));
+                generateTable();
+            // }
+
+        }).fail(function(data) {
+            console.log("failed while Revenue invoice for : "+ invoiceId);
+        //     --synAccrualInvoiceCount;
+        //     if(synAccrualInvoiceCount == 0) {
+        //         console.log("invoice ID hash : "+invoiceIdHash);
+        //         $.each(invoiceIdHash, function(invoiceId, hash) {
+        //             var splitArray = hash["index"].split('-');
+        //             for(var i=2; i<splitArray.length; i++ ) {
+        //                 responseData[splitArray[0]][splitArray[1]][splitArray[i]]["Due Date"] = hash["Due Date"];
+        //                 responseData[splitArray[0]][splitArray[1]][splitArray[i]]["Settled Date"] = hash["Settled Date"];
+        //             }
+        //         });
+        //     }
+        });
+
 }
 
 
