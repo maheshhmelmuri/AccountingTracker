@@ -158,7 +158,7 @@ function getAccrualTable(accrualArray,itemID,eventName) {
     });
 
     accrualTable += '</tbody></table></div></div>';
-    console.log("accrual table: "+accrualTable);
+    // console.log("accrual table: "+accrualTable);
 
     return accrualTable;
 
@@ -200,7 +200,7 @@ function addExtraDetails(extraDetails,itemID,eventName,rowId) {
         });
         extraDetailsHtml += '<tr class="extraDetail-'+indexId+'" style="font-weight:bold; display: none">' +padding+header+ ' </tr>\
             <tr class="extraDetail-'+indexId+'" style="display: none">' +padding+val+ '</tr>';
-        console.log("its in else tempdetails are: "+JSON.stringify(tempDetails));
+        // console.log("its in else tempdetails are: "+JSON.stringify(tempDetails));
         addExtraDetails(tempDetails,itemID,eventName,rowId);
     }
 
@@ -291,14 +291,13 @@ function fetchRevenueAccrual(searchId, searchType) {
         //console.log(JSON.stringify(data));
         $.each(data,function(itemId, dataArray) {
             $.each(dataArray,function (eventName,eventData) {
-                invoiceIdHash = {};
                 $.each(eventData,function (index) {
                     if( invoiceIdHash[eventData[index]["invoice_id"]] == undefined ) {
-                        invoiceIdHash[eventData[index]["invoice_id"]+"-"+itemId] = {};
+                        invoiceIdHash[eventData[index]["invoice_id"]+"#"+itemId] = {};
                         console.log("item id is : "+itemId+" and eventName :"+eventName);
-                        invoiceIdHash[eventData[index]["invoice_id"]+"-"+itemId]["indexes"] = itemId + "-" + eventName + "-" + index;
+                        invoiceIdHash[eventData[index]["invoice_id"]+"#"+itemId]["indexes"] = itemId + "-" + eventName + "-" + index;
                     } else {
-                        invoiceIdHash[eventData[index]["invoice_id"]+"-"+itemId]["indexes"] = invoiceIdHash[eventData[index]["invoice_id"]]["indexes"] + "-" + index;
+                        invoiceIdHash[eventData[index]["invoice_id"]+"#"+itemId]["indexes"] = invoiceIdHash[eventData[index]["invoice_id"]]["indexes"] + "-" + index;
                     }
 
                 });
@@ -310,7 +309,7 @@ function fetchRevenueAccrual(searchId, searchType) {
         --syncAccrualCount;
         if(syncAccrualCount == 0) {
         //     // generateTable();
-        //     // console.log("accrual to zer, data is: "+ JSON.stringify(responseData));
+            console.log("syncAccrualCount to zero, invoice hash is is: "+ JSON.stringify(invoiceIdHash));
             fetchAccrualInvoiceData();
         }
         // closeTable();
@@ -318,7 +317,7 @@ function fetchRevenueAccrual(searchId, searchType) {
         console.log("failed while fetching RCN");
         --syncAccrualCount;
         if(syncAccrualCount == 0) {
-        //      // console.log("accrual to zer, data is: "+ JSON.stringify(responseData));
+            console.log("syncAccrualCount to zero, invoice hash is is: "+ JSON.stringify(invoiceIdHash));
         //     // generateTable();
             fetchAccrualInvoiceData();
         }
@@ -495,6 +494,7 @@ function fetchSummaryTableData() {
 //TODO
 function fetchAccrualData() {
     console.log("shipment: "+JSON.stringify(shipmentIds));
+    invoiceIdHash = {};
     $.each(shipmentIds,function(index) {
        //do the accrual calls
         fetchRevenueAccrual(shipmentIds[index],"merchant_ref_id");
@@ -517,7 +517,7 @@ function fetchAccrualInvoice(invoiceId, searchType)
      {
         // ++synAccrualInvoiceCount;
         console.log("calling Revenue invoice");
-        $.get('/accIn',{id:invoiceId,type:searchType,BU:BuName}).done(function (data) {
+        $.get('/accIn',{id:invoiceId.split('#')[0],type:searchType,BU:BuName}).done(function (data) {
             ++invoiceIdFetchCount;
             Materialize.toast('Revenue invoice Details found!', 4000);
             console.log("da:"+JSON.stringify(data));

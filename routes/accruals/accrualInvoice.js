@@ -21,7 +21,7 @@ router.get('/',function (req,res,next) {
     var result = clientHelper.getHelper().execute('get',header,'revenue_accrual_invoice',req.query.BU, localParamHash);
     return result.pipe(function (result) {
         rawJsonInt = JSON.stringify(result);
-        //console.log("result1"+rawJsonInt);
+        console.log("result1"+rawJsonInt);
         invIdParser = customInvoiceIDParser.customInvoiceIDParser(rawJsonInt);
         console.log("invIdParser:"+JSON.stringify(invIdParser));
         deferred.success(res.send(invIdParser));
