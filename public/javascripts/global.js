@@ -73,7 +73,7 @@ function fetchData(trackingId)
         // $.extend(responseData,data);
         responseData['TableHeader'] = data;
         console.log("final JSON :"+JSON.stringify(responseData));
-        Materialize.toast('Found Table Header!', 4000);
+        //Materialize.toast('Found Table Header!', 4000);
         // createInvoiceHeader();
         //once table data found call the invoice api
         fetchInvoiceDetails();
@@ -141,24 +141,28 @@ function getAccrualTable(accrualArray,itemID,eventName) {
     accrualTable +='</tr>\
     <tbody>';
 
-    $.each(accrualArray, function(index) {
-        accrualTable += '</tr>';
-        $.each(accrualArray[index], function(key,value) {
-            if ( $.inArray(key,ignoreDisplayTable) < 0 ) {
-                if(key == "Type") {
-                    accrualTable += '<td class="typeColumn" id="AccrId-'+itemID+'_'+eventName+'_'+index+'" onclick="showExtraDetails(this)"><u>' + value + '</u></td>';
+    if(accrualArray != undefined) {
+        $.each(accrualArray, function (index) {
+            accrualTable += '</tr>';
+            $.each(accrualArray[index], function (key, value) {
+                if ($.inArray(key, ignoreDisplayTable) < 0) {
+                    if (key == "Type") {
+                        accrualTable += '<td class="typeColumn" id="AccrId-' + itemID + '_' + eventName + '_' + index + '" onclick="showExtraDetails(this)"><u>' + value + '</u></td>';
 
-                }else {
-                    accrualTable += '<td>' + value + '</td>';
+                    } else {
+                        accrualTable += '<td>' + value + '</td>';
+                    }
                 }
-            }
+            });
+            extraDetailsHtml = '';
+            accrualTable += addExtraDetails(accrualArray[index]["extra_details"], itemID, eventName, index);
         });
-        extraDetailsHtml = '';
-        accrualTable += addExtraDetails(accrualArray[index]["extra_details"],itemID,eventName,index);
-    });
+    }
 
-    accrualTable += '</tbody></table></div></div>';
-    // console.log("accrual table: "+accrualTable);
+
+        accrualTable += '</tbody></table></div></div>';
+        console.log("accrual table: " + accrualTable);
+
 
     return accrualTable;
 
@@ -246,9 +250,18 @@ function generateTable()  {
                 <div class="collapsible-header sub-sub-heading" style="color: white"> Event : '+eventName+'</div>';
 
                     var eventLine = getEventLine(eventName);
-                    summLine = getSummaryLine(itemID,data['invoice'][0]['shipment_id']);
-                    var invoice_table = getInvoiceTable(data['invoice']);
-                    var accrual_table = getAccrualTable(data['accrual'],itemID,eventName);
+                    var invoice_table = '';
+                    var accrual_table = '';
+                    if(data['invoice'] != undefined)
+                    {
+                        summLine = getSummaryLine(itemID,data['invoice'][0]['shipment_id']);
+                        invoice_table = getInvoiceTable(data['invoice']);
+                    }
+                    if(data['accrual'] != undefined)
+                    {
+                        accrual_table = getAccrualTable(data['accrual'],itemID,eventName);
+                    }
+
                     // eventLevelTable += eventLine+invoice_table+accrual_table;
                     accordion += '<div class="collapsible-body">'+invoice_table+accrual_table+'</div>\
                     </li>';
@@ -287,7 +300,7 @@ function fetchRevenueAccrual(searchId, searchType) {
     ++syncAccrualCount;
     console.log("calling Revenue Accrual");
     $.get('/racc',{id:searchId,type:searchType,BU:BuName}).done(function (data) {
-        Materialize.toast('Revenue Accrual Details found!', 4000);
+        //Materialize.toast('Revenue Accrual Details found!', 4000);
         //console.log(JSON.stringify(data));
         $.each(data,function(itemId, dataArray) {
             $.each(dataArray,function (eventName,eventData) {
@@ -329,7 +342,7 @@ function fetchCostAccrual(searchId, searchType) {
     // ++syncAccrualCount;
     console.log("calling Cost Acrual");
     $.get('/cacc',{id:searchId,type:searchType,BU:BuName}).done(function (data) {
-        Materialize.toast('Cost Accrual Details found!', 4000);
+        //Materialize.toast('Cost Accrual Details found!', 4000);
         $.each(data,function(itemId, dataArray) {
             updateResultData(itemId, dataArray);
         });
@@ -388,7 +401,7 @@ function fetchRCN() {
     ++syncInvoiceCount;
     console.log("calling RCN");
     $.get('/rcn',{id:trackId,type:searchType,BU:BuName}).done(function (data) {
-        Materialize.toast('RCN Details found!', 4000);
+        //Materialize.toast('RCN Details found!', 4000);
         // responseData['invoice']['receivable_credit_note'] = data['receivable_credit_note'];
         // fillInvoiceRow(responseData['invoice']['receivable_credit_note']);
         // console.log(JSON.stringify(data));
@@ -414,7 +427,7 @@ function fetchRCN() {
 function fetchRdnData() {
     ++syncInvoiceCount;
     $.get('/rdn', {id: trackId, type: searchType, BU: BuName}).done(function (data) {
-        Materialize.toast('RDN Details found!', 4000);
+        //Materialize.toast('RDN Details found!', 4000);
         // responseData['invoice']['receivable_debit_note'] = data['receivable_debit_note'];
         $.each(data,function(itemId, eventData) {
             updateResultData(itemId, eventData);
@@ -435,7 +448,7 @@ function fetchRdnData() {
 function fetchPcnData() {
     ++syncInvoiceCount;
     $.get('/pcn',{id:trackId,type:searchType,BU:BuName}).done(function (data) {
-        Materialize.toast('PCN Details found!', 4000);
+        //Materialize.toast('PCN Details found!', 4000);
         // responseData['invoice']['payable_credit_note'] = data['payable_credit_note'];
         $.each(data,function(itemId, eventData) {
             updateResultData(itemId, eventData);
@@ -456,7 +469,7 @@ function fetchPcnData() {
 function fetchPDN() {
     ++syncInvoiceCount;
     $.get('/pdn',{id:trackId,type:searchType,BU:BuName}).done(function (data) {
-        Materialize.toast('PDN Details found!', 4000);
+        //Materialize.toast('PDN Details found!', 4000);
         // responseData['invoice']['payable_debit_note'] = data['payable_debit_note'];
         // fillInvoiceRow(responseData['invoice']['payable_debit_note']);
         // closeTable();
@@ -478,7 +491,7 @@ function fetchPDN() {
 
 function fetchSummaryTableData() {
     $.get('/summaryTable',{id:trackId,type:searchType,BU:BuName}).done(function (data) {
-        Materialize.toast('Summary Details found!', 4000);
+        //Materialize.toast('Summary Details found!', 4000);
         responseData["summary_detail"] = data;
         var summaryHead = $('#divSummaryHead');
         summaryHead.text("Summary of "+searchDisplay+": "+trackId);
@@ -519,7 +532,7 @@ function fetchAccrualInvoice(invoiceId, searchType)
         console.log("calling Revenue invoice");
         $.get('/accIn',{id:invoiceId.split('#')[0],type:searchType,BU:BuName}).done(function (data) {
             ++invoiceIdFetchCount;
-            Materialize.toast('Revenue invoice Details found!', 4000);
+            //Materialize.toast('Revenue invoice Details found!', 4000);
             console.log("da:"+JSON.stringify(data));
             // $.extend(invoiceIdHash[invoiceId],data);
             // $.each(invoiceIdHash,)
