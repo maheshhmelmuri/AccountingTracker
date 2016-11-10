@@ -292,12 +292,12 @@ function fetchRevenueAccrual(searchId, searchType) {
         $.each(data,function(itemId, dataArray) {
             $.each(dataArray,function (eventName,eventData) {
                 $.each(eventData,function (index) {
-                    if( invoiceIdHash[eventData[index]["invoice_id"]] == undefined ) {
+                    if( invoiceIdHash[eventData[index]["invoice_id"]+"#"+itemId] == undefined ) {
                         invoiceIdHash[eventData[index]["invoice_id"]+"#"+itemId] = {};
                         console.log("item id is : "+itemId+" and eventName :"+eventName);
                         invoiceIdHash[eventData[index]["invoice_id"]+"#"+itemId]["indexes"] = itemId + "-" + eventName + "-" + index;
                     } else {
-                        invoiceIdHash[eventData[index]["invoice_id"]+"#"+itemId]["indexes"] = invoiceIdHash[eventData[index]["invoice_id"]]["indexes"] + "-" + index;
+                        invoiceIdHash[eventData[index]["invoice_id"]+"#"+itemId]["indexes"] = invoiceIdHash[eventData[index]["invoice_id"]+"#"+itemId]["indexes"] + "-" + index;
                     }
 
                 });
