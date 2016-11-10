@@ -228,7 +228,9 @@ function getEventLine(eventName) {
 
 function generateTable()  {
     if(Object.keys(invoiceIdHash).length == invoiceIdFetchCount) {
+
         console.log("Generate table entered");
+        console.log("final output to show:"+JSON.stringify(responseData));
         //fillSUmmaryTable();
         var finalTable = "";
         finalTable = '<div class="top-heading" style="margin-bottom: 12px">Accounting details below</div>\
@@ -236,6 +238,7 @@ function generateTable()  {
         $('#divTableData').append(finalTable);
         $.each(responseData, function(itemID,itemHash) {
             if(itemID != "summary_detail" && itemID != "TableHeader") {
+                console.log("itemID:"+itemID);
                 var finalTable = "";
                 var summLine = "";
                 var accordion = "";
@@ -339,27 +342,43 @@ function fetchRevenueAccrual(searchId, searchType) {
 
 
 function fetchCostAccrual(searchId, searchType) {
-    // ++syncAccrualCount;
-    console.log("calling Cost Acrual");
-    $.get('/cacc',{id:searchId,type:searchType,BU:BuName}).done(function (data) {
-        //Materialize.toast('Cost Accrual Details found!', 4000);
+    ++syncAccrualCount;
+    console.log("calling Cost Accrual");
+    $.get('/racc',{id:searchId,type:searchType,BU:BuName}).done(function (data) {
+        //Materialize.toast('Revenue Accrual Details found!', 4000);
+        //console.log(JSON.stringify(data));
         $.each(data,function(itemId, dataArray) {
+            $.each(dataArray,function (eventName,eventData) {
+                $.each(eventData,function (index) {
+                    if( invoiceIdHash[eventData[index]["invoice_id"]+"#"+itemId] == undefined ) {
+                        invoiceIdHash[eventData[index]["invoice_id"]+"#"+itemId] = {};
+                        console.log("item id is : "+itemId+" and eventName :"+eventName);
+                        invoiceIdHash[eventData[index]["invoice_id"]+"#"+itemId]["indexes"] = itemId + "-" + eventName + "-" + index;
+                    } else {
+                        invoiceIdHash[eventData[index]["invoice_id"]+"#"+itemId]["indexes"] = invoiceIdHash[eventData[index]["invoice_id"]+"#"+itemId]["indexes"] + "-" + index;
+                    }
+
+                });
+            });
+            //console.log("dataArray"+JSON.stringify(dataArray))
             updateResultData(itemId, dataArray);
         });
 
-        // --syncAccrualCount;
-        // if(syncAccrualCount == 0) {
-        //     // generateTable();
-        //     // console.log("accrual to zer, data is: "+ JSON.stringify(responseData));
-        // }
+        --syncAccrualCount;
+        if(syncAccrualCount == 0) {
+            //     // generateTable();
+            console.log("syncAccrualCount to zero, invoice hash is is: "+ JSON.stringify(invoiceIdHash));
+            fetchAccrualInvoiceData();
+        }
         // closeTable();
     }).fail(function(data) {
-        console.log("failed while fetching RCN");
-        // --syncAccrualCount;
-        // if(syncAccrualCount == 0) {
-        //     // console.log("accrual to zer, data is: "+ JSON.stringify(responseData));
-        //     // generateTable();
-        // }
+        console.log("failed while fetching cost");
+        --syncAccrualCount;
+        if(syncAccrualCount == 0) {
+            console.log("syncAccrualCount to zero, invoice hash is is: "+ JSON.stringify(invoiceIdHash));
+            //     // generateTable();
+            fetchAccrualInvoiceData();
+        }
     });
 }
 
