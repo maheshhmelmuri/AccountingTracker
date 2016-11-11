@@ -7,7 +7,6 @@
     "oms": "http://10.47.2.215/order_items"
   },
   "FKMP_url" : {
-
     "shipping": "http://10.85.50.117/shipments/get_all_shipment_details?",
     "invoice": "http://10.85.50.152:80/v1/invoice/type/payable_credit_note",
     "invoice_pcn": "http://10.85.50.152:80/v1/invoice/type/payable_credit_note",
@@ -16,8 +15,10 @@
     "invoice_rdn": "http://10.85.50.152:80/v1/invoice/type/receivable_debit_note",
     "accrual": "http://10.85.51.31/accrual",
     "revenue_accrual": "http://10.85.51.31/accrual/revenue_accrual",
+    "revenue_reversal_accrual": "http://10.85.51.31/accrual/revenue_reversal_accrual",
     "cost_accrual": "http://10.85.51.31/accrual/cost_accrual",
     "revenue_accrual_invoice" :"http://10.85.50.152:80/v1/invoice/type/payable_credit_note",
+    "revenue_reversal_accrual_invoice":"http://10.85.50.152:80/v1/invoice/type/payable_debit_note",
     "cost_accrual_invoice" :"http://10.85.50.152:80/v1/invoice/type/payable_credit_note",
     "businessUnit": "http://10.85.52.146:80/business_unit",
     "oms": "http://10.47.2.215/order_items"
@@ -46,10 +47,13 @@
     "order_id": "invoice_ref_2"
   },
   "FKMP_revenue_accrual" : {
-    "merchant_ref_id": "external_ref_id"
+    "shipment_id": "external_ref_id"
+  },
+  "FKMP_revenue_reversal_accrual" : {
+    "shipment_id": "external_ref_id"
   },
   "FKMP_cost_accrual" : {
-    "merchant_ref_id": "external_ref_id"
+    "shipment_id": "external_ref_id"
   },
   "FKMP_revenue_accrual_invoice" : {
     "invoice_id": "client_ref_id"

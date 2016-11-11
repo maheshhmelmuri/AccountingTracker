@@ -18,10 +18,10 @@ router.get('/',function (req,res,next) {
     localParamHash["invoice_id"] = req.query.id;
     var rawJsonInt = {};
     var invIdParser = {};
-    var result = clientHelper.getHelper().execute('get',header,'revenue_accrual_invoice',req.query.BU, localParamHash);
+    var result = clientHelper.getHelper().execute('get',header,req.query.accrualType,req.query.BU, localParamHash);
     return result.pipe(function (result) {
         rawJsonInt = JSON.stringify(result);
-        console.log("result1"+rawJsonInt);
+        console.log("result1 for accrual type :"+req.query.accrualType+" ...." + rawJsonInt);
         invIdParser = customInvoiceIDParser.customInvoiceIDParser(rawJsonInt);
         console.log("invIdParser:"+JSON.stringify(invIdParser));
         deferred.success(res.send(invIdParser));

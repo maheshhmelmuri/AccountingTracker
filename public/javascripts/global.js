@@ -30,7 +30,7 @@ var extraDetailsHtml = '';
 var buOptionMapping = '{"FKMP":\
                                 {\
                                 "order_id":"Order Id",\
-                                "merchant_ref_id":"Merchant Ref Id"\
+                                "shipment_id":"Shipment Id"\
                                 },\
                          "EKL":\
                                 {\
@@ -261,7 +261,11 @@ function generateTable()  {
 
                     if(data['invoice'] != undefined)
                     {
-                        summLine = getSummaryLine(itemID,data['invoice'][0]['shipment_id']);
+
+                        if(eventName.substring(0,8) == "shipment") {
+                            console.log("shipID:"+eventName.substring(0,8));
+                            summLine = getSummaryLine(itemID, data['invoice'][0]['shipment_id']);
+                        }
                         invoice_table = getInvoiceTable(data['invoice']);
                     }
 
@@ -332,7 +336,7 @@ function fetchRevenueAccrual(searchId, searchType) {
         if(syncAccrualCount == 0) {
         //     // generateTable();
             console.log("syncAccrualCount to zero, invoice hash is is: "+ JSON.stringify(invoiceIdHash));
-            fetchAccrualInvoiceData();
+            fetchAccrualInvoiceData("revenue_accrual_invoice");
         }
         // closeTable();
     }).fail(function(data) {
@@ -341,7 +345,49 @@ function fetchRevenueAccrual(searchId, searchType) {
         if(syncAccrualCount == 0) {
             console.log("syncAccrualCount to zero, invoice hash is is: "+ JSON.stringify(invoiceIdHash));
         //     // generateTable();
-            fetchAccrualInvoiceData();
+            fetchAccrualInvoiceData("revenue_accrual_invoice");
+        }
+    });
+}
+
+function fetchRevenueReversalAccrual(searchId, searchType) {
+    ++syncAccrualCount;
+    console.log("calling Revenue reverse Accrual");
+    $.get('/rracc',{id:searchId,type:searchType,BU:BuName}).done(function (data) {
+        //Materialize.toast('Revenue Accrual Details found!', 4000);
+        //console.log(JSON.stringify(data));
+        $.each(data,function(itemId, dataArray) {
+            $.each(dataArray,function (eventName,eventData) {
+                $.each(eventData,function (index) {
+                    if(eventData[index]["invoice_id"] != null) {
+                        if (invoiceIdHash[eventData[index]["invoice_id"] + "#" + itemId] == undefined) {
+                            invoiceIdHash[eventData[index]["invoice_id"] + "#" + itemId] = {};
+                            console.log("item id is : " + itemId + " and eventName :" + eventName);
+                            invoiceIdHash[eventData[index]["invoice_id"] + "#" + itemId]["indexes"] = itemId + "-" + eventName + "-" + index;
+                        } else {
+                            invoiceIdHash[eventData[index]["invoice_id"] + "#" + itemId]["indexes"] = invoiceIdHash[eventData[index]["invoice_id"] + "#" + itemId]["indexes"] + "-" + index;
+                        }
+                    }
+                });
+            });
+            //console.log("dataArray"+JSON.stringify(dataArray))
+            updateResultData(itemId, dataArray);
+        });
+
+        --syncAccrualCount;
+        if(syncAccrualCount == 0) {
+            //     // generateTable();
+            console.log("syncAccrualCount to zero, invoice hash is is: "+ JSON.stringify(invoiceIdHash));
+            fetchAccrualInvoiceData("revenue_reversal_accrual_invoice");
+        }
+        // closeTable();
+    }).fail(function(data) {
+        console.log("failed while fetching reverse revenue");
+        --syncAccrualCount;
+        if(syncAccrualCount == 0) {
+            console.log("syncAccrualCount to zero, invoice hash is is: "+ JSON.stringify(invoiceIdHash));
+            //     // generateTable();
+            fetchAccrualInvoiceData("revenue_reversal_accrual_invoice");
         }
     });
 }
@@ -377,7 +423,7 @@ function fetchCostAccrual(searchId, searchType) {
         if(syncAccrualCount == 0) {
             //     // generateTable();
             console.log("syncAccrualCount to zero, invoice hash is is: "+ JSON.stringify(invoiceIdHash));
-            fetchAccrualInvoiceData();
+            fetchAccrualInvoiceData("cost_accrual_invoice");
         }
         // closeTable();
     }).fail(function(data) {
@@ -386,7 +432,7 @@ function fetchCostAccrual(searchId, searchType) {
         if(syncAccrualCount == 0) {
             console.log("syncAccrualCount to zero, invoice hash is is: "+ JSON.stringify(invoiceIdHash));
             //     // generateTable();
-            fetchAccrualInvoiceData();
+            fetchAccrualInvoiceData("cost_accrual_invoice");
         }
     });
 }
@@ -411,7 +457,7 @@ function updateResultData(itemId, eventData) {
                 } else {
                     responseData[itemId][eventName]["invoice"].push(eventArray[index]);
                 }
-            } else if ( eventArray[index]["Type"] == "revenue_accrual" || eventArray[index]["Type"] == "cost_accrual") {
+            } else if ( eventArray[index]["Type"] == "revenue_accrual" || eventArray[index]["Type"] == "cost_accrual" || eventArray[index]["Type"] == "revenue_reversal_accrual" || eventArray[index]["Type"] == "cost_reversal_accrual") {
                 if ( responseData[itemId][eventName]["accrual"] == undefined ) {
                     responseData[itemId][eventName]["accrual"] = [];
                     responseData[itemId][eventName]["accrual"].push(eventArray[index]);
@@ -538,27 +584,29 @@ function fetchAccrualData() {
     invoiceIdHash = {};
     $.each(shipmentIds,function(index) {
        //do the accrual calls
-        fetchRevenueAccrual(shipmentIds[index],"merchant_ref_id");
-        fetchCostAccrual(shipmentIds[index],"merchant_ref_id");
+        fetchRevenueAccrual(shipmentIds[index],"shipment_id");
+        fetchRevenueReversalAccrual(shipmentIds[index],"shipment_id");
+        fetchCostAccrual(shipmentIds[index],"shipment_id");
+
     });
 }
 
-function fetchAccrualInvoiceData()
+function fetchAccrualInvoiceData(accrualType)
 {
     console.log("this is called");
     console.log("the invoice hash is: "+JSON.stringify(invoiceIdHash));
     var keyArray = Object.keys(invoiceIdHash);
     $.each( keyArray , function (index) {
-        fetchAccrualInvoice(keyArray[index],"invoice_id");
+        fetchAccrualInvoice(keyArray[index],"invoice_id",accrualType);
         });
 
 }
 
-function fetchAccrualInvoice(invoiceId, searchType)
+function fetchAccrualInvoice(invoiceId, searchType, accrualType)
      {
         // ++synAccrualInvoiceCount;
-        console.log("calling Revenue invoice");
-        $.get('/accIn',{id:invoiceId.split('#')[0],type:searchType,BU:BuName}).done(function (data) {
+        console.log("calling Revenue invoice : "+ accrualType);
+        $.get('/accIn',{id:invoiceId.split('#')[0],type:searchType,BU:BuName,accrualType:accrualType}).done(function (data) {
             ++invoiceIdFetchCount;
             //Materialize.toast('Revenue invoice Details found!', 4000);
             console.log("da:"+JSON.stringify(data));

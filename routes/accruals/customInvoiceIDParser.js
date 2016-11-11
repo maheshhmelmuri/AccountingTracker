@@ -8,8 +8,19 @@ module.exports =
         var jsonReader = JSON.parse(rawJson);
         var jsonOutput = {};
         if(jsonReader.invoices != null || jsonReader.invoices != undefined ) {
-            jsonOutput["Due Date"] = dateFormatter(jsonReader.invoices[0].due_date);
-            jsonOutput["Settled Date"] = dateFormatter(jsonReader.invoices[0].invoice_ref_date_3);
+            if(jsonReader.invoices[0] != undefined)
+            {
+                jsonOutput["Due Date"] = dateFormatter(jsonReader.invoices[0].due_date);
+                jsonOutput["Settled Date"] = dateFormatter(jsonReader.invoices[0].invoice_ref_date_3);
+            }
+            else
+            {
+                jsonOutput["Due Date"] = "null";
+                jsonOutput["Settled Date"] = "null";
+
+            }
+
+
         }
         return jsonOutput;
 
