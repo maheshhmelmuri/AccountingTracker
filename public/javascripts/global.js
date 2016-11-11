@@ -55,6 +55,7 @@ function changeSearchBy(bu_select) {
 
 function fetchData(trackingId)
 {
+    invoiceIdFetchCount = 0;
     trackId=$('#inpTrackingId').val();
     searchType = $('#inpSearchType').val();
     searchDisplay = $('#inpSearchDisplay input').val();
@@ -227,6 +228,7 @@ function getEventLine(eventName) {
 }
 
 function generateTable()  {
+
     if(Object.keys(invoiceIdHash).length == invoiceIdFetchCount) {
 
         console.log("Generate table entered");
@@ -255,11 +257,14 @@ function generateTable()  {
                     var eventLine = getEventLine(eventName);
                     var invoice_table = '';
                     var accrual_table = '';
+
+
                     if(data['invoice'] != undefined)
                     {
                         summLine = getSummaryLine(itemID,data['invoice'][0]['shipment_id']);
                         invoice_table = getInvoiceTable(data['invoice']);
                     }
+
                     if(data['accrual'] != undefined)
                     {
                         accrual_table = getAccrualTable(data['accrual'],itemID,eventName);
@@ -308,14 +313,15 @@ function fetchRevenueAccrual(searchId, searchType) {
         $.each(data,function(itemId, dataArray) {
             $.each(dataArray,function (eventName,eventData) {
                 $.each(eventData,function (index) {
-                    if( invoiceIdHash[eventData[index]["invoice_id"]+"#"+itemId] == undefined ) {
-                        invoiceIdHash[eventData[index]["invoice_id"]+"#"+itemId] = {};
-                        console.log("item id is : "+itemId+" and eventName :"+eventName);
-                        invoiceIdHash[eventData[index]["invoice_id"]+"#"+itemId]["indexes"] = itemId + "-" + eventName + "-" + index;
-                    } else {
-                        invoiceIdHash[eventData[index]["invoice_id"]+"#"+itemId]["indexes"] = invoiceIdHash[eventData[index]["invoice_id"]+"#"+itemId]["indexes"] + "-" + index;
+                    if(eventData[index]["invoice_id"] != null) {
+                        if (invoiceIdHash[eventData[index]["invoice_id"] + "#" + itemId] == undefined) {
+                            invoiceIdHash[eventData[index]["invoice_id"] + "#" + itemId] = {};
+                            console.log("item id is : " + itemId + " and eventName :" + eventName);
+                            invoiceIdHash[eventData[index]["invoice_id"] + "#" + itemId]["indexes"] = itemId + "-" + eventName + "-" + index;
+                        } else {
+                            invoiceIdHash[eventData[index]["invoice_id"] + "#" + itemId]["indexes"] = invoiceIdHash[eventData[index]["invoice_id"] + "#" + itemId]["indexes"] + "-" + index;
+                        }
                     }
-
                 });
             });
             //console.log("dataArray"+JSON.stringify(dataArray))
@@ -344,18 +350,21 @@ function fetchRevenueAccrual(searchId, searchType) {
 function fetchCostAccrual(searchId, searchType) {
     ++syncAccrualCount;
     console.log("calling Cost Accrual");
-    $.get('/racc',{id:searchId,type:searchType,BU:BuName}).done(function (data) {
+    $.get('/cacc',{id:searchId,type:searchType,BU:BuName}).done(function (data) {
         //Materialize.toast('Revenue Accrual Details found!', 4000);
         //console.log(JSON.stringify(data));
         $.each(data,function(itemId, dataArray) {
             $.each(dataArray,function (eventName,eventData) {
                 $.each(eventData,function (index) {
-                    if( invoiceIdHash[eventData[index]["invoice_id"]+"#"+itemId] == undefined ) {
-                        invoiceIdHash[eventData[index]["invoice_id"]+"#"+itemId] = {};
-                        console.log("item id is : "+itemId+" and eventName :"+eventName);
-                        invoiceIdHash[eventData[index]["invoice_id"]+"#"+itemId]["indexes"] = itemId + "-" + eventName + "-" + index;
-                    } else {
-                        invoiceIdHash[eventData[index]["invoice_id"]+"#"+itemId]["indexes"] = invoiceIdHash[eventData[index]["invoice_id"]+"#"+itemId]["indexes"] + "-" + index;
+
+                   if(eventData[index]["invoice_id"] != null ) {
+                        if (invoiceIdHash[eventData[index]["invoice_id"] + "#" + itemId] == undefined) {
+                            invoiceIdHash[eventData[index]["invoice_id"] + "#" + itemId] = {};
+                            console.log("item id is : " + itemId + " and eventName :" + eventName);
+                            invoiceIdHash[eventData[index]["invoice_id"] + "#" + itemId]["indexes"] = itemId + "-" + eventName + "-" + index;
+                        } else {
+                            invoiceIdHash[eventData[index]["invoice_id"] + "#" + itemId]["indexes"] = invoiceIdHash[eventData[index]["invoice_id"] + "#" + itemId]["indexes"] + "-" + index;
+                        }
                     }
 
                 });
