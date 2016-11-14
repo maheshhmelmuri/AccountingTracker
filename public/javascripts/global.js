@@ -8,7 +8,7 @@
 'use strict';
 var shippingDetails = [];
 var responseData = {};
-var BuName;
+var buName;
 var trackId;
 var searchDisplay;
 var searchType;
@@ -53,11 +53,97 @@ function changeSearchBy(bu_select) {
     $('select').material_select();
 }
 
-function fetchData(trackingId)
+// if user pased the params direcly from url
+$(document).ready(function (){
+   console.log( location.search.substr(1).split('&') ) ;
+    var queryParams = location.search.substr(1).split('&');
+    if( queryParams.length == 3 ) //Specifically how many query params you are expecting
+    {
+        //set buName, trackId, and searchType from queryParams
+        var trackId = queryParams[2].split("=")[1];
+        var searchType = queryParams[1].split("=")[1];
+        var buName = queryParams[0].split("=")[1];
+
+        var malformed = false;
+
+        //Set the UI elements' values
+        switch( buName )
+        {
+            case "FKMP":
+                $('#inpBuId').val("FKMP").change();
+                switch( searchType )
+                {
+                    case "order_id":
+                        $('#inpSearchType').val("order_id").change();
+                        break;
+                    case "shipment_id":
+                        $('#inpSearchType').val("shipment_id").change();
+                        break;
+                    default:
+                        malformed = true;
+                }
+                break;
+            case "EKL":
+                $('#inpBuId').val("EKL").change();
+                switch( searchType )
+                {
+                    case "merchange_ref_id":
+                        $('#inpSearchType').val("merchange_ref_id").change();
+                        break;
+                    case "external_ref_id":
+                        $('#inpSearchType').val("external_ref_id").change();
+                        break;
+                    default:
+                        malformed = true;
+                }
+                break;
+            default:
+                malformed = true;
+        }
+
+
+        //Do any checks if needed
+
+        if(trackId.startsWith("OD") && trackId.length == 20)
+            $('#inpTrackingId').val(trackId).change();
+        else
+            malformed = true;
+
+
+        //call fetchData()
+        if( !malformed )
+        {
+            fetchData();
+        }
+
+        else {
+            alert("Invalid query parameters!");
+        }
+    }
+});
+
+function fetchData()
 {
     invoiceIdFetchCount = 0;
-    trackId=$('#inpTrackingId').val();
-    searchType = $('#inpSearchType').val();
+    if( buName !==  $('#inpBuId').val())
+        buName = $('#inpBuId').val();
+    if( trackId !== $('#inpTrackingId').val() )
+        trackId = $('#inpTrackingId').val();
+    if( searchType !== $('#inpSearchType').val() )
+        searchType = $('#inpSearchType').val();
+
+    // validation of the id
+    if(searchType == "order_id")
+    {
+        if(!trackId.startsWith("OD") || trackId.length != 20)
+        {
+            alert("invalid order id , please pass the valid order id");
+            throw new Error("Order id is not valid");
+        }
+
+
+    }
+
     searchDisplay = $('#inpSearchDisplay input').val();
     console.log("the response data before cleanup :"+JSON.stringify(responseData));
     responseData = {};
@@ -65,11 +151,11 @@ function fetchData(trackingId)
     $('#divPreLoader').css('display','inline-block');
     console.log("the response data now is :"+JSON.stringify(responseData));
     // searchType = searchType.split('_').join(' ');
-    BuName = $('#inpBuId').val();
+
     console.log(trackId);
     //readResponse();
     //fetch table header
-    $.get('/headerDef',{BU:BuName}).done(function(data) {
+    $.get('/headerDef',{BU:buName}).done(function(data) {
        console.log("the table header is found");
         // $.extend(responseData,data);
         responseData['TableHeader'] = data;
@@ -79,12 +165,23 @@ function fetchData(trackingId)
         //once table data found call the invoice api
         fetchInvoiceDetails();
         // generateTable();
+        if( history.pushState )
+        {
+            var newURL = location.protocol + "//" + location.host + location.pathname + "?buName="+buName+"&searchType="+searchType+"&trackId="+trackId;
+            history.pushState({path:newURL}, '', newURL);
+            console.log("newURL"+newURL);
+        }
+        else {
+            console.log("History pushState absent");
+        }
     }).fail(function (data) {
         console.log("failed while fetching header data");
     });
     
 
 }
+
+
 
 function getSummaryLine(ItemId, shipmentId) {
     return '<div>\
@@ -263,7 +360,7 @@ function generateTable()  {
                     {
 
                         if(eventName.substring(0,8) == "shipment") {
-                            console.log("shipID:"+eventName.substring(0,8));
+                            //console.log("shipID:"+eventName.substring(0,8));
                             summLine = getSummaryLine(itemID, data['invoice'][0]['shipment_id']);
                         }
                         invoice_table = getInvoiceTable(data['invoice']);
@@ -311,7 +408,7 @@ function fetchInvoiceDetails() {
 function fetchRevenueAccrual(searchId, searchType) {
     ++syncAccrualCount;
     console.log("calling Revenue Accrual");
-    $.get('/racc',{id:searchId,type:searchType,BU:BuName}).done(function (data) {
+    $.get('/racc',{id:searchId,type:searchType,BU:buName}).done(function (data) {
         //Materialize.toast('Revenue Accrual Details found!', 4000);
         //console.log(JSON.stringify(data));
         $.each(data,function(itemId, dataArray) {
@@ -353,7 +450,7 @@ function fetchRevenueAccrual(searchId, searchType) {
 function fetchRevenueReversalAccrual(searchId, searchType) {
     ++syncAccrualCount;
     console.log("calling Revenue reverse Accrual");
-    $.get('/rracc',{id:searchId,type:searchType,BU:BuName}).done(function (data) {
+    $.get('/rracc',{id:searchId,type:searchType,BU:buName}).done(function (data) {
         //Materialize.toast('Revenue Accrual Details found!', 4000);
         //console.log(JSON.stringify(data));
         $.each(data,function(itemId, dataArray) {
@@ -396,7 +493,7 @@ function fetchRevenueReversalAccrual(searchId, searchType) {
 function fetchCostAccrual(searchId, searchType) {
     ++syncAccrualCount;
     console.log("calling Cost Accrual");
-    $.get('/cacc',{id:searchId,type:searchType,BU:BuName}).done(function (data) {
+    $.get('/cacc',{id:searchId,type:searchType,BU:buName}).done(function (data) {
         //Materialize.toast('Revenue Accrual Details found!', 4000);
         //console.log(JSON.stringify(data));
         $.each(data,function(itemId, dataArray) {
@@ -474,7 +571,7 @@ function updateResultData(itemId, eventData) {
 function fetchRCN() {
     ++syncInvoiceCount;
     console.log("calling RCN");
-    $.get('/rcn',{id:trackId,type:searchType,BU:BuName}).done(function (data) {
+    $.get('/rcn',{id:trackId,type:searchType,BU:buName}).done(function (data) {
         //Materialize.toast('RCN Details found!', 4000);
         // responseData['invoice']['receivable_credit_note'] = data['receivable_credit_note'];
         // fillInvoiceRow(responseData['invoice']['receivable_credit_note']);
@@ -500,7 +597,7 @@ function fetchRCN() {
 
 function fetchRdnData() {
     ++syncInvoiceCount;
-    $.get('/rdn', {id: trackId, type: searchType, BU: BuName}).done(function (data) {
+    $.get('/rdn', {id: trackId, type: searchType, BU: buName}).done(function (data) {
         //Materialize.toast('RDN Details found!', 4000);
         // responseData['invoice']['receivable_debit_note'] = data['receivable_debit_note'];
         $.each(data,function(itemId, eventData) {
@@ -521,7 +618,7 @@ function fetchRdnData() {
 
 function fetchPcnData() {
     ++syncInvoiceCount;
-    $.get('/pcn',{id:trackId,type:searchType,BU:BuName}).done(function (data) {
+    $.get('/pcn',{id:trackId,type:searchType,BU:buName}).done(function (data) {
         //Materialize.toast('PCN Details found!', 4000);
         // responseData['invoice']['payable_credit_note'] = data['payable_credit_note'];
         $.each(data,function(itemId, eventData) {
@@ -542,7 +639,7 @@ function fetchPcnData() {
 
 function fetchPDN() {
     ++syncInvoiceCount;
-    $.get('/pdn',{id:trackId,type:searchType,BU:BuName}).done(function (data) {
+    $.get('/pdn',{id:trackId,type:searchType,BU:buName}).done(function (data) {
         //Materialize.toast('PDN Details found!', 4000);
         // responseData['invoice']['payable_debit_note'] = data['payable_debit_note'];
         // fillInvoiceRow(responseData['invoice']['payable_debit_note']);
@@ -564,7 +661,7 @@ function fetchPDN() {
 }
 
 function fetchSummaryTableData() {
-    $.get('/summaryTable',{id:trackId,type:searchType,BU:BuName}).done(function (data) {
+    $.get('/summaryTable',{id:trackId,type:searchType,BU:buName}).done(function (data) {
         //Materialize.toast('Summary Details found!', 4000);
         responseData["summary_detail"] = data;
         var summaryHead = $('#divSummaryHead');
@@ -606,7 +703,7 @@ function fetchAccrualInvoice(invoiceId, searchType, accrualType)
      {
         // ++synAccrualInvoiceCount;
         console.log("calling Revenue invoice : "+ accrualType);
-        $.get('/accIn',{id:invoiceId.split('#')[0],type:searchType,BU:BuName,accrualType:accrualType}).done(function (data) {
+        $.get('/accIn',{id:invoiceId.split('#')[0],type:searchType,BU:buName,accrualType:accrualType}).done(function (data) {
             ++invoiceIdFetchCount;
             //Materialize.toast('Revenue invoice Details found!', 4000);
             console.log("da:"+JSON.stringify(data));
@@ -617,38 +714,10 @@ function fetchAccrualInvoice(invoiceId, searchType, accrualType)
                 responseData[splitArray[0]][splitArray[1]]["accrual"][splitArray[i]]["Due Date"] = data["Due Date"];
                 responseData[splitArray[0]][splitArray[1]]["accrual"][splitArray[i]]["Settled Date"] = data["Settled Date"];
             }
-
-            // --synAccrualInvoiceCount;
-            // if(synAccrualInvoiceCount == 0 ) {
-            //     console.log("invoice ID hash : "+JSON.stringify(invoiceIdHash));
-            //     $.each(invoiceIdHash, function(invoiceId, hash) {
-            //        var splitArray = hash["indexes"].split('-');
-            //        console.log("split array :"+JSON.stringify(splitArray));
-            //        for(var i=2; i<splitArray.length; i++ ) {
-            //            console.log(splitArray[0] + "- "+splitArray[1]+" -"+splitArray[i]);
-            //            console.log("assign "+ responseData[splitArray[0]][splitArray[1]]["accrual"][splitArray[i]]["Due Date"] + "to "+ hash["Due Date"]);
-            //            console.log("assign "+ responseData[splitArray[0]][splitArray[1]]["accrual"][splitArray[i]]["Settled Date"] + "to "+ hash["Settled Date"]);
-            //            responseData[splitArray[0]][splitArray[1]]["accrual"][splitArray[i]]["Due Date"] = hash["Due Date"];
-            //            responseData[splitArray[0]][splitArray[1]]["accrual"][splitArray[i]]["Settled Date"] = hash["Settled Date"];
-            //        }
-            //     });
-            //     console.log("the final result data with DD/SD : "+JSON.stringify(responseData));
                 generateTable();
-            // }
 
         }).fail(function(data) {
             console.log("failed while Revenue invoice for : "+ invoiceId);
-        //     --synAccrualInvoiceCount;
-        //     if(synAccrualInvoiceCount == 0) {
-        //         console.log("invoice ID hash : "+invoiceIdHash);
-        //         $.each(invoiceIdHash, function(invoiceId, hash) {
-        //             var splitArray = hash["index"].split('-');
-        //             for(var i=2; i<splitArray.length; i++ ) {
-        //                 responseData[splitArray[0]][splitArray[1]][splitArray[i]]["Due Date"] = hash["Due Date"];
-        //                 responseData[splitArray[0]][splitArray[1]][splitArray[i]]["Settled Date"] = hash["Settled Date"];
-        //             }
-        //         });
-        //     }
         });
 
 }

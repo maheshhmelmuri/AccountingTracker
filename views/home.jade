@@ -1,59 +1,75 @@
 extends layout
 
 block content
- div
-    div(style="padding-bottom:10px")
-        .top-heading Welcome to Home Accounting Entries Details
-    div
-        .sub-heading search accounting entries
-    .row(style='padding-top:1%;padding-left:1%',ng-controller='summaryLine')
-        .input-field.col.s2
-            select#inpBuId(onchange='changeSearchBy(this)')
-                //each bu in buList.toArray()
-                    //option(value=bu)= bu
-                option.disabled.selected(value='') Choose a BU
-                option(value='FKMP') FKMP
-                option(value='EKL' ) EKL
-            label Bu Name
-        .input-field.col.s2#inpSearchDisplay
-            select#inpSearchType
-                //option(value='vendor_tracking_id') Vendor Tracking ID
-                //option(value='merchant_ref_id') Merchant ID
-            label Search By
-        .form.col.s2(style='padding-top:0.4%')
-            .input-field.col.s12
-                input#inpTrackingId(type='text')
-                label(for='inpTrackingId') Search Id
-        .col.s1(style='padding-top:1.2%')
-            button#btnSearch.waves-effect.waves-light.btn(onclick='fetchData(this)') Search
-        #divPreLoader.preloader-wrapper.small.active.center(style='margin-top: 1.2%;display: none')
-            .spinner-layer(style='border-color: #01579B')
-                .circle-clipper.left
-                    .circle
-                .gap-patch
-                    .circle(style='background-color: #01579B')
-                .circle-clipper.right
-                    .circle
-    div
-        #divSummaryHead.top-heading(style='display:none')
-    #divOrderSummary.row(style='padding-top:1%;padding-left:1%;display:none')
-        .col.s6
-            table#summaryTable.summaryTable
-                thead
-                    tr
-                        th(data-field='search_id') ID
-                        th(data-field='service_type') Service type
-                        th(data-field='payment_type') Payment type
-                        th(data-field='seller_Id') Seller Id
-                tbody
-                    tr
-                        td#search_id
-                        td#service_type
-                        td#payment_type
-                        td#seller_id
-                    tr
- div#divTableData
 
-    p#payload
+    div
+        div(style="padding-bottom:10px")
+            .top-heading Welcome to Home Accounting Entries Details
+        div
+            .sub-heading search accounting entries
+        .row(style='padding-top:1%;padding-left:1%',ng-controller='summaryLine')
+            .input-field.col.s2
+                select#inpBuId(onchange='changeSearchBy(this)')
+                    //each bu in buList.toArray()
+                        //option(value=bu)= bu
+                    option.disabled.selected(value='') Choose a BU
+                    option(value='FKMP') FKMP
+                    option(value='EKL' ) EKL
+                label Bu Name
+            .input-field.col.s2#inpSearchDisplay
+                select#inpSearchType
+                    //option(value='vendor_tracking_id') Vendor Tracking ID
+                    //option(value='merchant_ref_id') Merchant ID
+                label Search By
+            .form.col.s2(style='padding-top:0.4%')
+                .input-field.col.s12
+                    input#inpTrackingId(type='text')
+                    label(for='inpTrackingId') Search Id
+            .col.s1(style='padding-top:1.2%')
+                button#btnSearch.waves-effect.waves-light.btn(onclick='fetchData()') Search
+            #divPreLoader.preloader-wrapper.small.active.center(style='margin-top: 1.2%;display: none')
+                .spinner-layer(style='border-color: #01579B')
+                    .circle-clipper.left
+                        .circle
+                    .gap-patch
+                        .circle(style='background-color: #01579B')
+                    .circle-clipper.right
+                        .circle
+        div
+            #divSummaryHead.top-heading(style='display:none')
+        #divOrderSummary.row(style='padding-top:1%;padding-left:1%;display:none')
+            .col.s6
+                table#summaryTable.summaryTable
+                    thead
+                        tr
+                            th(data-field='search_id') ID
+                            th(data-field='service_type') Service type
+                            th(data-field='payment_type') Payment type
+                            th(data-field='seller_Id') Seller Id
+                    tbody
+                        tr
+                            td#search_id
+                            td#service_type
+                            td#payment_type
+                            td#seller_id
+                        tr
+    div#divTableData
 
-    script(src='javascripts/business-unit.js')
+
+        p#payload
+
+        script(src='javascripts/business-unit.js')
+        script.
+            (function (i, s, o, g, r, a, m) {
+                i['GoogleAnalyticsObject'] = r;
+                i[r] = i[r] || function () {
+                            (i[r].q = i[r].q || []).push(arguments)
+                        }, i[r].l = 1 * new Date();
+                a = s.createElement(o),
+                        m = s.getElementsByTagName(o)[0];
+                a.async = 1;
+                a.src = g;
+                m.parentNode.insertBefore(a, m)
+            })(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
+            ga('create', 'UA-87251345-1', 'auto');
+            ga('send', 'pageview');
