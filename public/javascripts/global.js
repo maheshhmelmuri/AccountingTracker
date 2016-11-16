@@ -132,6 +132,10 @@ function fetchData()
     if( searchType !== $('#inpSearchType').val() )
         searchType = $('#inpSearchType').val();
 
+    //initializing the global variables in order to avoid appending the results
+    shipmentIds = [];
+    invoiceIdHash = {};
+
     // validation of the id
     if(searchType == "order_id")
     {
@@ -186,7 +190,8 @@ function getSummaryLine(ItemId, shipmentId) {
 
 function getInvoiceTable(invoiceArray) {
     console.log("enteres invoice table");
-    var invoiceTable = '<div id="divInvoiceTable" style="padding-top:1%;padding-left: 1%;padding-right: 1%" class="row">\
+    var invoiceTable ='';
+    invoiceTable = '<div id="divInvoiceTable" style="padding-top:1%;padding-left: 1%;padding-right: 1%" class="row">\
         <div class="col s12">\
         <table id="invoiceTable"> \
         <thead>\
@@ -219,7 +224,8 @@ function getInvoiceTable(invoiceArray) {
 
 function getAccrualTable(accrualArray,itemID,eventName) {
     console.log("accrual table entered");
-    var accrualTable = '<div id="divAccrualTable" style="padding-top:1%;padding-left: 1%;padding-right: 1%" class="row">\
+    var accrualTable ='';
+    accrualTable = '<div id="divAccrualTable" style="padding-top:1%;padding-left: 1%;padding-right: 1%" class="row">\
     <div class="col s12">\
     <table id="accrualTable">\
     <thead>\
@@ -577,6 +583,7 @@ function fetchRCN() {
 
         --syncInvoiceCount;
         if(syncInvoiceCount == 0) {
+
             fetchAccrualData();
         }
         // closeTable();
@@ -670,17 +677,43 @@ function fetchSummaryTableData() {
     });
 }
 
+//clears the data if it does not found any data
+function clearAllInputs() {
+
+    $('#inpBuId').val(" ").change();
+    $('#inpTrackingId').val(" ").change;
+    $('#inpSearchType').val(" ").change;
+    $('#divPreLoader').css('display','none');
+    if( history.pushState )
+    {
+        var newURL = location.protocol + "//" + location.host + location.pathname
+        history.pushState({path:newURL}, '', newURL);
+        console.log("newURL"+newURL);
+    }
+    else {
+        console.log("History pushState absent");
+    }
+}
+
 //TODO
 function fetchAccrualData() {
     console.log("shipment: "+JSON.stringify(shipmentIds));
     invoiceIdHash = {};
-    $.each(shipmentIds,function(index) {
-       //do the accrual calls
-        fetchRevenueAccrual(shipmentIds[index],"shipment_id");
-        fetchRevenueReversalAccrual(shipmentIds[index],"shipment_id");
-        fetchCostAccrual(shipmentIds[index],"shipment_id");
+    if(shipmentIds.length == 0)
+    {
+        alert("No data found for given id, seems it would have archived");
+        clearAllInputs();
+        throw new Error("No data found for this id");
+    }
+    else {
+        $.each(shipmentIds, function (index) {
+            //do the accrual calls
+            fetchRevenueAccrual(shipmentIds[index], "shipment_id");
+            fetchRevenueReversalAccrual(shipmentIds[index], "shipment_id");
+            fetchCostAccrual(shipmentIds[index], "shipment_id");
 
-    });
+        });
+    }
 }
 
 function fetchAccrualInvoiceData(accrualType)
