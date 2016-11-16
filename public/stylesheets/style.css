@@ -85,9 +85,16 @@ table {
   border-collapse: collapse !important;
 }
 
-table, th, td {
+table, th {
   border: 1px solid black !important;
   text-align: center !important;
+}
+
+td {
+  border: 1px solid black !important;
+  text-align: center !important;
+  width: initial;
+  max-width: 200px;
 }
 
 #divTableData {

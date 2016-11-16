@@ -53,7 +53,7 @@ function changeSearchBy(bu_select) {
     $('select').material_select();
 }
 
-// if user pased the params direcly from url
+// if user passed the params direcly from url
 $(document).ready(function (){
    console.log( location.search.substr(1).split('&') ) ;
     var queryParams = location.search.substr(1).split('&');
@@ -140,8 +140,6 @@ function fetchData()
             alert("invalid order id , please pass the valid order id");
             throw new Error("Order id is not valid");
         }
-
-
     }
 
     searchDisplay = $('#inpSearchDisplay input').val();
@@ -150,20 +148,17 @@ function fetchData()
     $('#divTableData').text("");
     $('#divPreLoader').css('display','inline-block');
     console.log("the response data now is :"+JSON.stringify(responseData));
-    // searchType = searchType.split('_').join(' ');
 
-    console.log(trackId);
-    //readResponse();
     //fetch table header
     $.get('/headerDef',{BU:buName}).done(function(data) {
        console.log("the table header is found");
-        // $.extend(responseData,data);
         responseData['TableHeader'] = data;
         console.log("final JSON :"+JSON.stringify(responseData));
         //Materialize.toast('Found Table Header!', 4000);
-        // createInvoiceHeader();
+
         //once table data found call the invoice api
         fetchInvoiceDetails();
+
         // generateTable();
         if( history.pushState )
         {
