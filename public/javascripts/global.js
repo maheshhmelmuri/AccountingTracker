@@ -663,6 +663,7 @@ function fetchPDN() {
 }
 
 function fetchSummaryTableData() {
+
     $.get('/summaryTable',{id:trackId,type:searchType,BU:buName}).done(function (data) {
         //Materialize.toast('Summary Details found!', 4000);
         responseData["summary_detail"] = data;
@@ -684,6 +685,11 @@ function clearAllInputs() {
     $('#inpTrackingId').val(" ").change;
     $('#inpSearchType').val(" ").change;
     $('#divPreLoader').css('display','none');
+
+    //$('#summaryTable').val(" ").change;
+    $('#divSummaryHead').hide();
+    $('#divOrderSummary').hide();
+
     if( history.pushState )
     {
         var newURL = location.protocol + "//" + location.host + location.pathname
