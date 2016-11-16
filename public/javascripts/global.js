@@ -26,6 +26,8 @@ var invoiceIdFetchCount = 0;
 //var ignoreDisplayTable = ['shipment_id'];
 var ignoreDisplayTable = ['shipment_id','extra_details','invoice_id'];
 var extraDetailsHtml = '';
+var invoiceTable ='';
+var accrualTable ='';
 
 var buOptionMapping = '{"FKMP":\
                                 {\
@@ -139,10 +141,16 @@ function fetchData()
     // validation of the id
     if(searchType == "order_id")
     {
-        if(!trackId.startsWith("OD") || trackId.length != 20)
+        try {
+            if (!trackId.startsWith("OD") || trackId.length != 20) {
+                throw("order id is not valid, please pass the valid id");
+            }
+        }
+        catch (e)
         {
-            alert("invalid order id , please pass the valid order id");
-            throw new Error("Order id is not valid");
+            alert(e);
+            clearAllInputs();
+            return;
         }
     }
 
@@ -190,7 +198,6 @@ function getSummaryLine(ItemId, shipmentId) {
 
 function getInvoiceTable(invoiceArray) {
     console.log("enteres invoice table");
-    var invoiceTable ='';
     invoiceTable = '<div id="divInvoiceTable" style="padding-top:1%;padding-left: 1%;padding-right: 1%" class="row">\
         <div class="col s12">\
         <table id="invoiceTable"> \
@@ -224,7 +231,6 @@ function getInvoiceTable(invoiceArray) {
 
 function getAccrualTable(accrualArray,itemID,eventName) {
     console.log("accrual table entered");
-    var accrualTable ='';
     accrualTable = '<div id="divAccrualTable" style="padding-top:1%;padding-left: 1%;padding-right: 1%" class="row">\
     <div class="col s12">\
     <table id="accrualTable">\
@@ -685,10 +691,9 @@ function clearAllInputs() {
     $('#inpTrackingId').val(" ").change;
     $('#inpSearchType').val(" ").change;
     $('#divPreLoader').css('display','none');
-
-    //$('#summaryTable').val(" ").change;
     $('#divSummaryHead').hide();
     $('#divOrderSummary').hide();
+    $('#divTableData').hide();
 
     if( history.pushState )
     {
@@ -705,21 +710,26 @@ function clearAllInputs() {
 function fetchAccrualData() {
     console.log("shipment: "+JSON.stringify(shipmentIds));
     invoiceIdHash = {};
-    if(shipmentIds.length == 0)
+    try {
+        if (shipmentIds.length == 0) {
+            throw("No data found for this id");
+        }
+    }
+    catch (e)
     {
         alert("No data found for given id, seems it would have archived");
         clearAllInputs();
-        throw new Error("No data found for this id");
+        return;
     }
-    else {
-        $.each(shipmentIds, function (index) {
-            //do the accrual calls
-            fetchRevenueAccrual(shipmentIds[index], "shipment_id");
-            fetchRevenueReversalAccrual(shipmentIds[index], "shipment_id");
-            fetchCostAccrual(shipmentIds[index], "shipment_id");
 
-        });
-    }
+    $.each(shipmentIds, function (index) {
+        //do the accrual calls
+        fetchRevenueAccrual(shipmentIds[index], "shipment_id");
+        fetchRevenueReversalAccrual(shipmentIds[index], "shipment_id");
+        fetchCostAccrual(shipmentIds[index], "shipment_id");
+
+    });
+
 }
 
 function fetchAccrualInvoiceData(accrualType)
