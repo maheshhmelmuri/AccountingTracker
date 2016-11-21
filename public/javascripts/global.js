@@ -77,9 +77,15 @@ $(document).ready(function (){
                 {
                     case "order_id":
                         $('#inpSearchType').val("order_id").change();
+                        //do checks for the order id
+                        if (trackId.startsWith("OD") && trackId.length == 20)
+                            $('#inpTrackingId').val(trackId).change();
+                        else
+                            malformed = true;
                         break;
                     case "shipment_id":
                         $('#inpSearchType').val("shipment_id").change();
+                        $('#inpTrackingId').val(trackId).change();
                         break;
                     default:
                         malformed = true;
@@ -89,8 +95,8 @@ $(document).ready(function (){
                 $('#inpBuId').val("EKL").change();
                 switch( searchType )
                 {
-                    case "merchange_ref_id":
-                        $('#inpSearchType').val("merchange_ref_id").change();
+                    case "merchant_ref_id":
+                        $('#inpSearchType').val("merchant_ref_id").change();
                         break;
                     case "external_ref_id":
                         $('#inpSearchType').val("external_ref_id").change();
@@ -106,10 +112,16 @@ $(document).ready(function (){
 
         //Do any checks if needed
 
-        if(trackId.startsWith("OD") && trackId.length == 20)
-            $('#inpTrackingId').val(trackId).change();
-        else
-            malformed = true;
+        // if(searchType == "order_id") {
+        //     if (trackId.startsWith("OD") && trackId.length == 20)
+        //         $('#inpTrackingId').val(trackId).change();
+        //     else
+        //         malformed = true;
+        // }
+        // else
+        // {
+        //     $('#inpTrackingId').val(trackId).change();
+        // }
 
 
         //call fetchData()
@@ -123,6 +135,7 @@ $(document).ready(function (){
         }
     }
 });
+
 
 function fetchData()
 {
@@ -252,7 +265,7 @@ function getAccrualTable(accrualArray,itemID,eventName) {
             $.each(accrualArray[index], function (key, value) {
                 if ($.inArray(key, ignoreDisplayTable) < 0) {
                     if (key == "Type") {
-                        accrualTable += '<td class="typeColumn" id="AccrId-' + itemID + '_' + eventName + '_' + index + '" onclick="showExtraDetails(this)"><u>' + value + '</u></td>';
+                        accrualTable += '<td class="typeColumn" id="AccrId--' + itemID + '_' + eventName + '_' + index + '" onclick="showExtraDetails(this)"><u>' + value + '</u></td>';
 
                     } else {
                         accrualTable += '<td>' + value + '</td>';
@@ -289,26 +302,37 @@ function addExtraDetails(extraDetails,itemID,eventName,rowId) {
     if ( diff >= 0 ) {
         $.each(tempDetails,function (key,value) {
             header +='<td>' +key+ '</td>';
-            val += '<td>' +value+ '</td>';
+            //val += '<td style="max-width:100px ;max-height: 100px;">' +value+ '</td>';
+            val += '<td> \
+                        <div style="height: 50px; overflow-y: auto">\
+                            '+value+' \
+                        </div>\
+                    </td>'
         });
 
         for( var i=1 ; i<diff ; i++ ) {
             header +='<td></td>';
             val += '<td></td>';
         }
-        extraDetailsHtml += '<tr class="extraDetail-'+indexId+'" style="font-weight:bold; display: none">' +padding+header+ ' </tr>\
-            <tr class="extraDetail-'+indexId+'" style="display: none">' +padding+val+ '</tr>';
+        extraDetailsHtml += '<tr class="extraDetail--'+indexId+'" style="font-weight:bold; display: none">' +padding+header+ ' </tr>\
+            <tr class="extraDetail--'+indexId+'" style="display: none">' +padding+val+ '</tr>';
     } else {
         var count = 0;
         $.each(tempDetails,function (key,value) {
             if(++count <= headerLength - 1) {
                 header +='<td>' +key+ '</td>';
-                val += '<td>' +value+ '</td>';
+                //val += '<td>' +value+ '</td>';
+                //val += '<td style="max-width:100px ;max-height: 100px;">' +value+ '</div></td>';
+                val += '<td> \
+                            <div style="height: 50px; overflow-y: auto">\
+                            '+value+' \
+                            </div>\
+                        </td>'
                 delete tempDetails[key];
             }
         });
-        extraDetailsHtml += '<tr class="extraDetail-'+indexId+'" style="font-weight:bold; display: none">' +padding+header+ ' </tr>\
-            <tr class="extraDetail-'+indexId+'" style="display: none">' +padding+val+ '</tr>';
+        extraDetailsHtml += '<tr class="extraDetail--'+indexId+'" style="font-weight:bold; display: none">' +padding+header+ ' </tr>\
+            <tr class="extraDetail--'+indexId+'" style="display: none">' +padding+val+ '</tr>';
         // console.log("its in else tempdetails are: "+JSON.stringify(tempDetails));
         addExtraDetails(tempDetails,itemID,eventName,rowId);
     }
@@ -319,9 +343,10 @@ function addExtraDetails(extraDetails,itemID,eventName,rowId) {
 
 function showExtraDetails(element) {
 
-    var id = element.id.split('-')[1];
-    var check = eval('$(".extraDetail-'+id+'").is(":visible")');
-    var detRow = $('.extraDetail-'+id+'');
+    var id = element.id.split('--')[1];
+    console.log("id:"+id);
+    var check = eval('$(".extraDetail--'+id+'").is(":visible")');
+    var detRow = $('.extraDetail--'+id+'');
     check ? detRow.hide() : detRow.show();
 }
 
@@ -366,10 +391,10 @@ function generateTable()  {
                     if(data['invoice'] != undefined)
                     {
 
-                        if(eventName.substring(0,8) == "shipment") {
+                        //if(eventName.substring(0,8) == "shipment") {
                             //console.log("shipID:"+eventName.substring(0,8));
-                            summLine = getSummaryLine(itemID, data['invoice'][0]['shipment_id']);
-                        }
+                        summLine = getSummaryLine(itemID, data['invoice'][0]['shipment_id']);
+                        //}
                         invoice_table = getInvoiceTable(data['invoice']);
                     }
 
@@ -628,7 +653,6 @@ function fetchPcnData() {
     ++syncInvoiceCount;
     $.get('/pcn',{id:trackId,type:searchType,BU:buName}).done(function (data) {
         //Materialize.toast('PCN Details found!', 4000);
-        // responseData['invoice']['payable_credit_note'] = data['payable_credit_note'];
         $.each(data,function(itemId, eventData) {
             updateResultData(itemId, eventData);
         });

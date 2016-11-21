@@ -27,23 +27,23 @@
     "type": ["payable_credit_note"]
   },
   "FKMP_invoice" : {
-    "merchant_ref_id": "external_ref_id",
+    "shipment_id": "external_ref_id",
     "order_id": "invoice_ref_2"
   },
   "FKMP_invoice_pdn" : {
-    "merchant_ref_id": "external_ref_id",
+    "shipment_id": "external_ref_id",
     "order_id": "invoice_ref_2"
   },
   "FKMP_invoice_rcn" : {
-    "merchant_ref_id": "external_ref_id",
+    "shipment_id": "external_ref_id",
     "order_id": "invoice_ref_2"
   },
   "FKMP_invoice_pcn" : {
-    "merchant_ref_id": "external_ref_id",
+    "shipment_id": "external_ref_id",
     "order_id": "invoice_ref_2"
   },
   "FKMP_invoice_rdn" : {
-    "merchant_ref_id": "external_ref_id",
+    "shipment_id": "external_ref_id",
     "order_id": "invoice_ref_2"
   },
   "FKMP_revenue_accrual" : {

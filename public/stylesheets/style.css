@@ -83,6 +83,7 @@ a {
 
 table {
   border-collapse: collapse !important;
+  table-layout: auto;
 }
 
 table, th {
@@ -94,7 +95,7 @@ td {
   border: 1px solid black !important;
   text-align: center !important;
   width: initial;
-  max-width: 200px;
+  max-width: 200px !important;
 }
 
 #divTableData {
@@ -104,5 +105,4 @@ td {
 [class^='extraDetail']{
   font-size: smaller;
   background-color: #dcedc8;
-
 }
