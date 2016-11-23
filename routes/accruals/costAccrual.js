@@ -15,7 +15,7 @@ router.get('/',function (req,res,next) {
     return result.pipe(function(result) {
         rawJson = JSON.stringify(result);
         var cacc = {};
-        cacc = customAccJParser.customAccJParser(rawJson);
+        cacc = customAccJParser.customAccJParser(rawJson,req.query.BU);
         console.log("final cost output: "+ JSON.stringify(cacc));
         deferred.success(res.send(cacc));
     });

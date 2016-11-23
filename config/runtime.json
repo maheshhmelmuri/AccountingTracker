@@ -3,6 +3,13 @@
     "shipping": "http://10.85.50.117/shipments/get_all_shipment_details?",
     "invoice": "http://10.85.50.152:80/v1/invoice/type",
     "accrual": "http://10.85.51.31/accrual/revenue_accrual",
+    "invoice_pcn": "http://10.85.50.152:80/v1/invoice/type/payable_credit_note",
+    "invoice_pdn": "http://10.85.50.152:80/v1/invoice/type/payable_debit_note",
+    "invoice_rcn": "http://10.85.50.152:80/v1/invoice/type/receivable_credit_note",
+    "invoice_rdn": "http://10.85.50.152:80/v1/invoice/type/receivable_debit_note",
+    "revenue_accrual": "http://10.85.51.31/accrual/revenue_accrual",
+    "revenue_reversal_accrual": "http://10.85.51.31/accrual/revenue_reversal_accrual",
+    "cost_accrual": "http://10.85.51.31/accrual/cost_accrual",
     "businessUnit": "http://10.85.52.146:80/business_unit",
     "oms": "http://10.47.2.215/order_items"
   },
@@ -65,8 +72,44 @@
     "vendor_tracking_id": "reporting_ref_2",
     "merchant_ref_id": "reporting_ref_3"
   },
+  "EKL_invoice" : {
+    "vendor_tracking_id": "external_ref_id",
+    "merchant_ref_id": "merchant_ref_id"
+  },
+  "EKL_invoice_pdn" : {
+    "vendor_tracking_id": "external_ref_id",
+    "merchant_ref_id": "merchant_ref_id"
+  },
+  "EKL_invoice_rcn" : {
+    "vendor_tracking_id": "external_ref_id",
+    "merchant_ref_id": "merchant_ref_id"
+  },
+  "EKL_invoice_pcn" : {
+    "vendor_tracking_id": "external_ref_id",
+    "merchant_ref_id": "merchant_ref_id"
+  },
+  "EKL_invoice_rdn" : {
+    "vendor_tracking_id": "external_ref_id",
+    "merchant_ref_id": "merchant_ref_id"
+  },
+  "EKL_revenue_accrual" : {
+    "external_ref_id": "external_ref_id",
+    "merchant_ref_id": "merchant_ref_id"
+  },
+  "EKL_cost_accrual" : {
+    "external_ref_id": "external_ref_id",
+    "merchant_ref_id": "merchant_ref_id"
+  },
+  "EKL_revenue_reversal_accrual" : {
+    "external_ref_id": "external_ref_id",
+    "merchant_ref_id": "merchant_ref_id"
+  },
   "table_definition" : {
     "FKMP": {
+      "invoice": ["Type","SubType","Amount","Created Date","Updated Date","Due Date","status","Settled Date"],
+      "accrual": ["Type","Fee Name","Amount","Tax","Total amount","Created Date","Updated Date","Due Date","Settled Date","status"]
+    },
+    "EKL": {
       "invoice": ["Type","SubType","Amount","Created Date","Updated Date","Due Date","status","Settled Date"],
       "accrual": ["Type","Fee Name","Amount","Tax","Total amount","Created Date","Updated Date","Due Date","Settled Date","status"]
     }

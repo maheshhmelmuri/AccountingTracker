@@ -15,7 +15,7 @@ router.get('/',function (req,res,next) {
     return result.pipe(function(result) {
         rawJson = JSON.stringify(result);
         var rdn = {};
-        rdn = customInvJParser.customInvJParser(rawJson);
+        rdn = customInvJParser.customInvJParser(rawJson,req.query.BU);
         console.log("final rdn output: "+ JSON.stringify(rdn));
         deferred.success(res.send(rdn));
     });

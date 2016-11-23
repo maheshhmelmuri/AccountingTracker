@@ -24,7 +24,7 @@ router.get('/',function (req,res,next) {
     return result.pipe(function(result) {
         rawJson = JSON.stringify(result);
         var rracc = {};
-        rracc = customAccJParser.customAccJParser(rawJson);
+        rracc = customAccJParser.customAccJParser(rawJson,req.query.BU);
         console.log("final revenue reversal output: "+ JSON.stringify(rracc));
         deferred.success(res.send(rracc));
     });

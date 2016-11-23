@@ -20,7 +20,7 @@ router.get('/',function (req,res,next) {
     return result.pipe(function(result) {
         rawJson = JSON.stringify(result);
         var racc = {};
-        racc = customAccJParser.customAccJParser(rawJson);
+        racc = customAccJParser.customAccJParser(rawJson,req.query.BU);
         console.log("final revenue output: "+ JSON.stringify(racc));
         deferred.success(res.send(racc));
     });

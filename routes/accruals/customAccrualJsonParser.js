@@ -4,7 +4,7 @@
 
 module.exports =
 {
-    customAccJParser: function customAccrualJsonParser(rawJson) {
+    customAccJParser: function customAccrualJsonParser(rawJson,bu) {
         var jsonReader = JSON.parse(rawJson);
         var jsonOutput = {};
         var jsonDataOrderItemEvent = {};
@@ -13,20 +13,36 @@ module.exports =
             for (var i = 0; i < jsonReader.accruals.length; i++) {
                 jsonOutput = {};
                 extraDetails = {};
-                var event = jsonReader.accruals[i].comments.toString().split(":")[1].trim();
-                if(jsonDataOrderItemEvent[jsonReader.accruals[i].accrual_ref_3] == undefined)
-                {
-                    jsonDataOrderItemEvent[jsonReader.accruals[i].accrual_ref_3] = {};
+                var event = '';
+                var itemId = '';
+
+                if(bu == 'FKMP') {
+                    event = jsonReader.accruals[i].comments.toString().split(":")[1].trim();
+                    itemId = jsonReader.accruals[i].accrual_ref_3;
+
                 }
-                if(jsonDataOrderItemEvent[jsonReader.accruals[i].accrual_ref_3][event] == undefined)
+                else if(bu == 'EKL')
                 {
-                    jsonDataOrderItemEvent[jsonReader.accruals[i].accrual_ref_3][event] = [];
+                    event = jsonReader.accruals[i].accrual_ref_3;
+                    itemId =  jsonReader.accruals[i].external_ref_id;
+                }
+
+                if(jsonDataOrderItemEvent[itemId] == undefined)
+                {
+                    jsonDataOrderItemEvent[itemId] = {};
+                }
+                if(jsonDataOrderItemEvent[itemId][event] == undefined)
+                {
+                    jsonDataOrderItemEvent[itemId][event] = [];
                 }
 
                 jsonOutput["Type"] = jsonReader.accruals[i].accrual_items[0].accrual_type;
                 jsonOutput["Fee name"] = jsonReader.accruals[i].accrual_ref_5;
                 jsonOutput["Amount"] = jsonReader.accruals[i].accrual_items[0].total_amount;
-                jsonOutput["Tax"] = jsonReader.accruals[i].accrual_items[0].sub_items[0].total_amount;
+                if(bu == 'FKMP')
+                    jsonOutput["Tax"] = jsonReader.accruals[i].accrual_items[0].sub_items[0].total_amount;
+                else
+                    jsonOutput["Tax"] = jsonReader.accruals[i].accrual_items[0].tax_rate;
                 jsonOutput["Total Amount"] = jsonReader.accruals[i].total_amount;
                 jsonOutput["Created date"] = dateFormatter(jsonReader.accruals[i].created_at);
                 jsonOutput["Updated date"] = dateFormatter(jsonReader.accruals[i].updated_at);
@@ -42,8 +58,6 @@ module.exports =
                 extraDetails["Zone"] = jsonReader.accruals[i].accrual_attributes["zone"];
                 extraDetails["Invoice Type"] = jsonReader.accruals[i].accrual_attributes["invoice_type"];
                 extraDetails["Weight"] = jsonReader.accruals[i].accrual_attributes["accrual_reporting_ref_9"];
-                //extraDetails["Weight Upper Bound"] = jsonReader.accruals[i].accrual_attributes["weight_upper_bound"];
-                //extraDetails["Weight Lower Bound"] = jsonReader.accruals[i].accrual_attributes["weight_lower_bound"];
                 extraDetails["Seller ID"] = jsonReader.accruals[i].accrual_attributes["seller_id"];
                 extraDetails["Accrual Ratio"] = jsonReader.accruals[i].accrual_attributes["accrualRatio"];
                 extraDetails["height"] = jsonReader.accruals[i].accrual_attributes["height"];
@@ -54,11 +68,11 @@ module.exports =
                 extraDetails["Expression"] = jsonReader.accruals[i].accrual_attributes["expression"];
                 extraDetails["Expression variables"] = jsonReader.accruals[i].accrual_attributes["parameters"];
                 jsonOutput["extra_details"] = extraDetails;
-                jsonDataOrderItemEvent[jsonReader.accruals[i].accrual_ref_3][event].push(jsonOutput);
+                jsonDataOrderItemEvent[itemId][event].push(jsonOutput);
 
             }
         }
-        //console.log("jsonDataUpdated2:"+JSON.stringify(jsonDataOrderItemEvent));
+        //console.log("jsonDataUpdated2:"+JSON.stringify(jsonDataOrderItemEvent;
         return jsonDataOrderItemEvent;
 
     }
@@ -71,3 +85,4 @@ function dateFormatter(inputDate) {
         return inputDate.toString().substring(0, 10) + " " + inputDate.toString().substring(11, 19).toString();
     }
 }
+

@@ -98,7 +98,7 @@ $(document).ready(function (){
                     case "merchant_ref_id":
                         $('#inpSearchType').val("merchant_ref_id").change();
                         break;
-                    case "external_ref_id":
+                    case "vendor_tracking_id":
                         $('#inpSearchType').val("external_ref_id").change();
                         break;
                     default:
@@ -204,9 +204,19 @@ function fetchData()
 
 
 function getSummaryLine(ItemId, shipmentId) {
-    return '<div>\
-    <div class="sub-heading">Item ID :'+ItemId+' Shipment ID :'+shipmentId+'</div>\
-    </div>';
+    if(buName == 'FKMP') {
+        return '<div>\
+            <div class="sub-heading">Item ID :' + ItemId + ' Shipment ID :' + shipmentId + '</div>\
+            </div>';
+     }
+     else if(buName == 'EKL')
+    {
+        return '<div>\
+            <div class="sub-heading">tracking id  :' + ItemId + '</div>\
+            </div>';
+    }
+    return null;
+
 }
 
 function getInvoiceTable(invoiceArray) {
@@ -358,15 +368,16 @@ function getEventLine(eventName) {
 
 function generateTable()  {
 
-    if(Object.keys(invoiceIdHash).length == invoiceIdFetchCount) {
 
+    if(Object.keys(invoiceIdHash).length == invoiceIdFetchCount) {
+        var divTableData = $('#divTableData');
         console.log("Generate table entered");
         console.log("final output to show:"+JSON.stringify(responseData));
         //fillSUmmaryTable();
         var finalTable = "";
         finalTable = '<div class="top-heading" style="margin-bottom: 12px">Accounting details below</div>\
 ';
-        $('#divTableData').append(finalTable);
+        divTableData.append(finalTable);
         $.each(responseData, function(itemID,itemHash) {
             if(itemID != "summary_detail" && itemID != "TableHeader") {
                 console.log("itemID:"+itemID);
@@ -393,6 +404,7 @@ function generateTable()  {
 
                         //if(eventName.substring(0,8) == "shipment") {
                             //console.log("shipID:"+eventName.substring(0,8));
+
                         summLine = getSummaryLine(itemID, data['invoice'][0]['shipment_id']);
                         //}
                         invoice_table = getInvoiceTable(data['invoice']);
@@ -413,7 +425,7 @@ function generateTable()  {
                 });
                 finalAccordion += '</ul>';
                 finalTable += summLine + finalAccordion;
-                $('#divTableData').append(finalTable);
+                divTableData.append(finalTable);
             }
         });
 
@@ -421,6 +433,8 @@ function generateTable()  {
         $('#divPreLoader').css('display','none');
         // console.log("responseData: "+ JSON.stringify(responseData));
     }
+
+    divTableData.show();
 
 }
 
@@ -465,7 +479,7 @@ function fetchRevenueAccrual(searchId, searchType) {
         if(syncAccrualCount == 0) {
         //     // generateTable();
             console.log("syncAccrualCount to zero, invoice hash is is: "+ JSON.stringify(invoiceIdHash));
-            fetchAccrualInvoiceData("revenue_accrual_invoice");
+            fetchAccrualInvoiceData("revenue_accrual_invoice",buName);
         }
         // closeTable();
     }).fail(function(data) {
@@ -474,7 +488,7 @@ function fetchRevenueAccrual(searchId, searchType) {
         if(syncAccrualCount == 0) {
             console.log("syncAccrualCount to zero, invoice hash is is: "+ JSON.stringify(invoiceIdHash));
         //     // generateTable();
-            fetchAccrualInvoiceData("revenue_accrual_invoice");
+            fetchAccrualInvoiceData("revenue_accrual_invoice",buName);
         }
     });
 }
@@ -507,7 +521,7 @@ function fetchRevenueReversalAccrual(searchId, searchType) {
         if(syncAccrualCount == 0) {
             //     // generateTable();
             console.log("syncAccrualCount to zero, invoice hash is is: "+ JSON.stringify(invoiceIdHash));
-            fetchAccrualInvoiceData("revenue_reversal_accrual_invoice");
+            fetchAccrualInvoiceData("revenue_reversal_accrual_invoice",buName);
         }
         // closeTable();
     }).fail(function(data) {
@@ -516,7 +530,7 @@ function fetchRevenueReversalAccrual(searchId, searchType) {
         if(syncAccrualCount == 0) {
             console.log("syncAccrualCount to zero, invoice hash is is: "+ JSON.stringify(invoiceIdHash));
             //     // generateTable();
-            fetchAccrualInvoiceData("revenue_reversal_accrual_invoice");
+            fetchAccrualInvoiceData("revenue_reversal_accrual_invoice",buName);
         }
     });
 }
@@ -552,7 +566,7 @@ function fetchCostAccrual(searchId, searchType) {
         if(syncAccrualCount == 0) {
             //     // generateTable();
             console.log("syncAccrualCount to zero, invoice hash is is: "+ JSON.stringify(invoiceIdHash));
-            fetchAccrualInvoiceData("cost_accrual_invoice");
+            fetchAccrualInvoiceData("cost_accrual_invoice",buName);
         }
         // closeTable();
     }).fail(function(data) {
@@ -561,7 +575,7 @@ function fetchCostAccrual(searchId, searchType) {
         if(syncAccrualCount == 0) {
             console.log("syncAccrualCount to zero, invoice hash is is: "+ JSON.stringify(invoiceIdHash));
             //     // generateTable();
-            fetchAccrualInvoiceData("cost_accrual_invoice");
+            fetchAccrualInvoiceData("cost_accrual_invoice",buName);
         }
     });
 }
@@ -615,14 +629,14 @@ function fetchRCN() {
         --syncInvoiceCount;
         if(syncInvoiceCount == 0) {
 
-            fetchAccrualData();
+            fetchAccrualData(buName);
         }
         // closeTable();
     }).fail(function(data) {
         console.log("failed while fetching RCN");
         --syncInvoiceCount;
         if(syncInvoiceCount == 0) {
-            fetchAccrualData();
+            fetchAccrualData(buName);
         }
     });
 }
@@ -644,7 +658,7 @@ function fetchRdnData() {
         console.log("failed while fetching rdn");
         --syncInvoiceCount;
         if(syncInvoiceCount == 0) {
-            fetchAccrualData();
+            fetchAccrualData(buName);
         }
     });
 }
@@ -658,13 +672,13 @@ function fetchPcnData() {
         });
         --syncInvoiceCount;
         if(syncInvoiceCount == 0) {
-            fetchAccrualData();
+            fetchAccrualData(buName);
         }
     }).fail(function(data) {
         console.log("failed while fetching PCN");
         --syncInvoiceCount;
         if(syncInvoiceCount == 0) {
-            fetchAccrualData();
+            fetchAccrualData(buName);
         }
     });
 }
@@ -681,13 +695,13 @@ function fetchPDN() {
         });
         --syncInvoiceCount;
         if(syncInvoiceCount == 0) {
-            fetchAccrualData();
+            fetchAccrualData(buName);
         }
     }).fail(function(data) {
         console.log("failed while fetching PDN");
         --syncInvoiceCount;
         if(syncInvoiceCount == 0) {
-            fetchAccrualData();
+            fetchAccrualData(buName);
         }
     });
 }
@@ -708,7 +722,7 @@ function fetchSummaryTableData() {
     });
 }
 
-//clears the data if it does not found any data
+//clears the tables if it does not found any data
 function clearAllInputs() {
 
     $('#inpBuId').val(" ").change();
@@ -731,7 +745,8 @@ function clearAllInputs() {
 }
 
 //TODO
-function fetchAccrualData() {
+function fetchAccrualData(buName) {
+
     console.log("shipment: "+JSON.stringify(shipmentIds));
     invoiceIdHash = {};
     try {
@@ -746,24 +761,58 @@ function fetchAccrualData() {
         return;
     }
 
-    $.each(shipmentIds, function (index) {
-        //do the accrual calls
-        fetchRevenueAccrual(shipmentIds[index], "shipment_id");
-        fetchRevenueReversalAccrual(shipmentIds[index], "shipment_id");
-        fetchCostAccrual(shipmentIds[index], "shipment_id");
+    switch (buName){
+        case "FKMP":
+            $.each(shipmentIds, function (index) {
+                //do the accrual calls
+                fetchRevenueAccrual(shipmentIds[index], "shipment_id");
+                fetchRevenueReversalAccrual(shipmentIds[index], "shipment_id");
+                fetchCostAccrual(shipmentIds[index], "shipment_id");
 
-    });
+            });
+            break;
+
+        case "EKL":
+            console.log("in EKLACC");
+            $.each(shipmentIds, function (index) {
+                //do the accrual calls
+                fetchRevenueAccrual(shipmentIds[index], "external_ref_id");
+                fetchRevenueReversalAccrual(shipmentIds[index], "external_ref_id");
+                fetchCostAccrual(shipmentIds[index], "external_ref_id");
+
+            });
+            break;
+
+    }
+
 
 }
 
-function fetchAccrualInvoiceData(accrualType)
+function fetchAccrualInvoiceData(accrualType,buName)
 {
-    console.log("this is called");
-    console.log("the invoice hash is: "+JSON.stringify(invoiceIdHash));
-    var keyArray = Object.keys(invoiceIdHash);
-    $.each( keyArray , function (index) {
-        fetchAccrualInvoice(keyArray[index],"invoice_id",accrualType);
-        });
+    switch (buName)
+    {
+        case "FKMP":
+            console.log("this is called");
+            console.log("the invoice hash is: "+JSON.stringify(invoiceIdHash));
+            //check invoice ids
+            var keys = Object.keys(invoiceIdHash);
+            if(keys.length != 0) {
+                var keyArray = keys;
+                $.each(keyArray, function (index) {
+                    fetchAccrualInvoice(keyArray[index], "invoice_id", accrualType);
+                });
+            }
+            else
+                generateTable();
+            break;
+
+        case "EKL":
+            console.log("EKL does not have this logic");
+            generateTable();
+            break;
+    }
+
 
 }
 
