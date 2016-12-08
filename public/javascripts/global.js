@@ -78,7 +78,7 @@ $(document).ready(function (){
                     case "order_id":
                         $('#inpSearchType').val("order_id").change();
                         //do checks for the order id
-                        if (trackId.startsWith("OD") && trackId.length == 20)
+                        if (trackId.startsWith("OD") && (trackId.length == 20 || trackId.length == 21))
                             $('#inpTrackingId').val(trackId).change();
                         else
                             malformed = true;
