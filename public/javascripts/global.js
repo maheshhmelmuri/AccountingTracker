@@ -151,11 +151,11 @@ function fetchData()
     shipmentIds = [];
     invoiceIdHash = {};
 
-    // validation of the id
+    // validation of the id, it can be 20 or 21 length
     if(searchType == "order_id")
     {
         try {
-            if (!trackId.startsWith("OD") || trackId.length != 20) {
+            if (!trackId.startsWith("OD") || (trackId.length != 20 && trackId.length !=21) ) {
                 throw("order id is not valid, please pass the valid id");
             }
         }
@@ -402,11 +402,11 @@ function generateTable()  {
                     if(data['invoice'] != undefined)
                     {
 
-                        //if(eventName.substring(0,8) == "shipment") {
-                            //console.log("shipID:"+eventName.substring(0,8));
-
-                        summLine = getSummaryLine(itemID, data['invoice'][0]['shipment_id']);
-                        //}
+                        //to avoid assigning the shipment id associated with reverse flow.
+                        if(eventName.substring(0,6) != "refund" && eventName.substring(0,6) != "return") {
+                            console.log("shipID:"+eventName.substring(0,8));
+                            summLine = getSummaryLine(itemID, data['invoice'][0]['shipment_id']);
+                        }
                         invoice_table = getInvoiceTable(data['invoice']);
                     }
 
